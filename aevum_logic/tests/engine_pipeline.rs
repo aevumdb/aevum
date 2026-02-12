@@ -66,8 +66,12 @@ mod tests {
             "Security Error: 'secret' field leaked."
         );
 
-        aevum_logic::rust_free_string(res_ptr_1);
-        aevum_logic::rust_free_string(proj_include);
+        unsafe {
+            aevum_logic::rust_free_string(res_ptr_1);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(proj_include);
+        }
 
         // ------------------------------------------------------------------
         // SCENARIO 2: Explicit Exclusion
@@ -85,11 +89,21 @@ mod tests {
         );
 
         // CLEANUP
-        aevum_logic::rust_free_string(res_ptr_2);
-        aevum_logic::rust_free_string(proj_suppress_id);
-        aevum_logic::rust_free_string(data);
-        aevum_logic::rust_free_string(query_all);
-        aevum_logic::rust_free_string(sort_none);
+        unsafe {
+            aevum_logic::rust_free_string(res_ptr_2);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(proj_suppress_id);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(data);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(query_all);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(sort_none);
+        }
     }
 
     #[test]
@@ -120,11 +134,21 @@ mod tests {
         assert!(idx_75 < idx_100, "Sorting Error: 75 should come before 100");
 
         // CLEANUP
-        aevum_logic::rust_free_string(res_ptr);
-        aevum_logic::rust_free_string(sort_asc);
-        aevum_logic::rust_free_string(data);
-        aevum_logic::rust_free_string(query);
-        aevum_logic::rust_free_string(proj);
+        unsafe {
+            aevum_logic::rust_free_string(res_ptr);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(sort_asc);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(data);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(query);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(proj);
+        }
     }
 
     #[test]
@@ -151,8 +175,14 @@ mod tests {
         );
 
         // CLEANUP
-        aevum_logic::rust_free_string(schema);
-        aevum_logic::rust_free_string(doc_valid);
-        aevum_logic::rust_free_string(doc_invalid);
+        unsafe {
+            aevum_logic::rust_free_string(schema);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(doc_valid);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(doc_invalid);
+        }
     }
 }

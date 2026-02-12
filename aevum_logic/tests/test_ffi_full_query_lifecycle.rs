@@ -75,11 +75,21 @@ mod tests {
         );
 
         // 4. TEARDOWN: Manually release all heap memory.
-        aevum_logic::rust_free_string(result_ptr);
-        aevum_logic::rust_free_string(data);
-        aevum_logic::rust_free_string(query);
-        aevum_logic::rust_free_string(sort);
-        aevum_logic::rust_free_string(projection);
+        unsafe {
+            aevum_logic::rust_free_string(result_ptr);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(data);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(query);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(sort);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(projection);
+        }
     }
 
     #[test]
@@ -96,8 +106,12 @@ mod tests {
         assert!(is_valid, "Validation Error: Document should match schema.");
 
         // 4. TEARDOWN
-        aevum_logic::rust_free_string(doc);
-        aevum_logic::rust_free_string(schema);
+        unsafe {
+            aevum_logic::rust_free_string(doc);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(schema);
+        }
     }
 
     #[test]
@@ -113,7 +127,11 @@ mod tests {
         assert_eq!(count, 2, "Aggregation Error: Expected count of 2.");
 
         // 4. TEARDOWN
-        aevum_logic::rust_free_string(data);
-        aevum_logic::rust_free_string(query);
+        unsafe {
+            aevum_logic::rust_free_string(data);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(query);
+        }
     }
 }

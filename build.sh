@@ -33,7 +33,7 @@ cat << "EOF"
   / _ \/ -_) V / || | '  \| |) | _ \
  /_/ \_\___|\_/ \_,_|_|_|_|___/|___/
 
-     Database Build System v1.0.0
+     Database Build System v1.0.1
 EOF
 echo -e "${RESET}"
 

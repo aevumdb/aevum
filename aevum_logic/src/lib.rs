@@ -249,7 +249,7 @@ pub extern "C" fn rust_delete(data: *const c_char, query: *const c_char) -> *mut
 /// * **Double Free:** `s` must not have been freed already. Double-freeing leads to undefined behavior.
 /// * **Null Pointers:** This function safely handles `NULL` pointers (no-op).
 #[no_mangle]
-pub extern "C" fn rust_free_string(s: *mut c_char) {
+pub unsafe extern "C" fn rust_free_string(s: *mut c_char) {
     if !s.is_null() {
         unsafe {
             // RECLAIM OWNERSHIP:

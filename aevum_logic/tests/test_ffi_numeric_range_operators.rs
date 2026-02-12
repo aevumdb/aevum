@@ -79,11 +79,21 @@ mod tests {
         );
 
         // 4. CLEANUP: Manually free all heap allocations to mimic C++ lifecycle.
-        aevum_logic::rust_free_string(res_ptr); // Free result
-        aevum_logic::rust_free_string(data); // Free inputs
-        aevum_logic::rust_free_string(query_gt);
-        aevum_logic::rust_free_string(sort);
-        aevum_logic::rust_free_string(proj);
+        unsafe {
+            aevum_logic::rust_free_string(res_ptr);
+        } // Free result
+        unsafe {
+            aevum_logic::rust_free_string(data);
+        } // Free inputs
+        unsafe {
+            aevum_logic::rust_free_string(query_gt);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(sort);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(proj);
+        }
     }
 
     #[test]
@@ -114,11 +124,19 @@ mod tests {
         );
 
         // 4. CLEANUP
-        aevum_logic::rust_free_string(res_ptr);
-        aevum_logic::rust_free_string(data);
-        aevum_logic::rust_free_string(query);
+        unsafe {
+            aevum_logic::rust_free_string(res_ptr);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(data);
+        }
+        unsafe {
+            aevum_logic::rust_free_string(query);
+        }
         // Note: empty_config was passed twice as const char*, but allocated once.
         // We only free it once.
-        aevum_logic::rust_free_string(empty_config);
+        unsafe {
+            aevum_logic::rust_free_string(empty_config);
+        }
     }
 }

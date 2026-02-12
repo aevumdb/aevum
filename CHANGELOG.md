@@ -2,8 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachanglog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.1] - 2026-02-12
+
+### Fixed
+- Corrected compilation error in `aevum_logic/src/lib.rs` by marking the `rust_free_string` FFI function as `unsafe`.
+- Wrapped calls to `aevum_logic::rust_free_string` in `unsafe` blocks within Rust test files to comply with `rust_free_string`'s new `unsafe` declaration.
 
 ## [1.0.0] - 2026-02-12
 

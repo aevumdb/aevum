@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachanglog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-02-12
+
+### Added
+- Implemented multi-threading for core engine operations (`find`, `count`, `update`, `delete`) using the `rayon` crate, significantly improving performance on multi-core systems.
+
 ## [1.0.1] - 2026-02-12
 
 ### Fixed

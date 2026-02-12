@@ -38,6 +38,7 @@
 //! - **Schema Validation:** Enforces structural integrity and type safety before write operations.
 
 use crate::operators;
+use rayon::prelude::*;
 use serde_json::{Map, Value};
 use std::cmp::Ordering;
 
@@ -283,16 +284,15 @@ pub fn find(
     let projection: Value =
         serde_json::from_str(proj_str).unwrap_or(Value::Object(Default::default()));
 
-    let mut results = Vec::new();
-
     // 1. FILTER PHASE
-    if let Some(docs) = data.as_array() {
-        for doc in docs {
-            if matches_query(doc, &query) {
-                results.push(doc.clone());
-            }
-        }
-    }
+    let mut results = if let Some(docs) = data.as_array() {
+        docs.par_iter()
+            .filter(|doc| matches_query(doc, &query))
+            .cloned()
+            .collect::<Vec<Value>>()
+    } else {
+        Vec::new()
+    };
 
     // 2. SORT PHASE
     if let Some(sort_obj) = sort.as_object() {
@@ -335,7 +335,7 @@ pub fn find(
 
     // 4. PROJECTION PHASE
     let final_results: Vec<Value> = sliced
-        .iter()
+        .par_iter() // Use par_iter here
         .map(|doc| apply_projection(doc, &projection))
         .collect();
 
@@ -353,7 +353,10 @@ pub fn count(data_str: &str, query_str: &str) -> usize {
     let query: Value = serde_json::from_str(query_str).unwrap_or(Value::Object(Default::default()));
 
     if let Some(docs) = data.as_array() {
-        return docs.iter().filter(|doc| matches_query(doc, &query)).count();
+        return docs
+            .par_iter()
+            .filter(|doc| matches_query(doc, &query))
+            .count();
     }
     0
 }
@@ -379,7 +382,7 @@ pub fn update(data_str: &str, query_str: &str, update_str: &str) -> String {
         serde_json::from_str(update_str).unwrap_or(Value::Object(Default::default()));
 
     if let Some(docs) = data.as_array_mut() {
-        for doc in docs {
+        docs.par_iter_mut().for_each(|doc| {
             if matches_query(doc, &query) {
                 // Ensure we have valid objects before merging fields
                 if let (Some(doc_obj), Some(update_obj)) =
@@ -395,7 +398,7 @@ pub fn update(data_str: &str, query_str: &str, update_str: &str) -> String {
                     }
                 }
             }
-        }
+        });
     }
     serde_json::to_string(&data).unwrap_or_else(|_| "[]".to_string())
 }
@@ -415,8 +418,12 @@ pub fn delete(data_str: &str, query_str: &str) -> String {
     let query: Value = serde_json::from_str(query_str).unwrap_or(Value::Object(Default::default()));
 
     if let Some(docs) = data.as_array_mut() {
-        // Retain only documents that DO NOT match the query
-        docs.retain(|doc| !matches_query(doc, &query));
+        let filtered_docs: Vec<Value> = docs
+            .par_iter()
+            .filter(|doc| !matches_query(doc, &query))
+            .cloned()
+            .collect();
+        *docs = filtered_docs;
     }
     serde_json::to_string(&data).unwrap_or_else(|_| "[]".to_string())
 }

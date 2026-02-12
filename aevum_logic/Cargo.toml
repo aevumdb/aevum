@@ -42,6 +42,9 @@ serde = { version = "1.0", features = ["derive"] }
 # Data Format: High-performance JSON manipulation for AevumDB's logic layer.
 serde_json = "1.0"
 
+# Parallelism: High-performance data-parallelism library for multi-core query execution.
+rayon = "1.8"
+
 [profile.release]
 # Optimization Strategy:
 # 3 = Maximize speed.

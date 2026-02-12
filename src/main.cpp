@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 
         // 4. System Bootstrap & Logging
         aevum::infra::Logger::log(aevum::infra::LogLevel::INFO,
-                                  "System: Booting AevumDB Kernel v1.0.1 (RC1)...");
+                                  "System: Booting AevumDB Kernel v1.1.0 (RC1)...");
         aevum::infra::Logger::log(aevum::infra::LogLevel::INFO,
                                   "Config: Persistence Path set to '" + data_path + "'");
         aevum::infra::Logger::log(aevum::infra::LogLevel::INFO,

@@ -6,7 +6,6 @@ A high-performance, embedded NoSQL database engine featuring a hybrid kernel. It
 [![Latest Release](https://img.shields.io/github/v/release/aevumdb/aevum?sort=semver)](https://github.com/aevumdb/aevum/releases)
 [![C++ Language Standard](https://img.shields.io/badge/Language-C%2B%2B17-blue)](https://isocpp.org)
 [![Rust Language](https://img.shields.io/badge/Language-Rust-orange)](https://www.rust-lang.org)
-[![License](https://img.shields.io/github/license/aevumdb/aevum)](LICENSE)
 
 ## Table of Contents
 
@@ -130,7 +129,7 @@ Once the server is running, you can interact with it using network tools like `t
 
 These examples use `netcat` (`nc`) for single, non-interactive commands.
 
-#### CRUD Operations
+### CRUD Operations
 
 *   **`insert`**: Add a new document.
     ```sh
@@ -162,7 +161,7 @@ These examples use `netcat` (`nc`) for single, non-interactive commands.
     echo '{"action": "count", "collection": "users", "auth": "root", "query": {}}' | nc localhost 8080
     ```
 
-#### Administration (Admin Role Required)
+### Administration (Admin Role Required)
 
 *   **`create_user`**: Create a new user with a specific role (`read`, `read_write`, `admin`).
     ```sh

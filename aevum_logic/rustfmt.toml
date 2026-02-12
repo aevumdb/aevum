@@ -1,0 +1,28 @@
+# AevumDB Rust Formatting Configuration
+# Optimized for Stable Toolchain and C++ Kernel Interoperability.
+
+# Core Layout
+# Maximum width of each line. 
+# 100 is chosen to match modern wide-screen IDEs used in AevumDB development.
+max_width = 100
+
+# Use 4 spaces for indentation. 
+# This is the industry standard for Rust to ensure readable nesting.
+tab_spaces = 4
+
+# Ensure Unix-style (LF) line endings.
+# Crucial for cross-platform consistency between Linux and macOS build environments.
+newline_style = "Unix"
+
+# Import Management
+# Alphabetically reorder imports to make dependency tracking easier.
+reorder_imports = true
+
+# Reorder module declarations.
+reorder_modules = true
+
+# Stable Refinements
+# These settings work on the Stable channel and provide the cleanest output.
+
+# Use shorthand for constructive field initialization when possible.
+use_field_init_shorthand = true

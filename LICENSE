@@ -1,0 +1,118 @@
+AEVUMDB COMMUNITY LICENSE
+Version 1.0, February 2026
+
+Copyright (c) 2026 Ananda Firmansyah.
+Official Organization: AevumDB (https://github.com/aevumdb)
+
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+1. DEFINITIONS
+
+   "Licensor" shall mean Ananda Firmansyah, the copyright owner and the 
+   authorized entity of the AevumDB organization.
+
+   "Software" shall mean the AevumDB database engine, including but not 
+   limited to source code, object code, documentation, binary files, and 
+   configuration files managed within the AevumDB organization repositories.
+
+   "You" (or "Your") shall mean an individual or Legal Entity exercising 
+   permissions granted by this License.
+
+   "Contribution" shall mean any work of authorship, including the original 
+   version of the Software and any modifications or additions to that 
+   Software, submitted to Licensor for inclusion in the Software.
+
+2. GRANT OF COPYRIGHT LICENSE
+
+   Subject to the terms and conditions of this License, Licensor hereby 
+   grants You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, 
+   and irrevocable copyright license to reproduce, prepare Derivative Works 
+   of, publicly display, publicly perform, sublicense, and distribute the 
+   Software and such Derivative Works in source or object form.
+
+3. GRANT OF PATENT LICENSE
+
+   Subject to the terms and conditions of this License, Licensor hereby 
+   grants You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, 
+   and irrevocable (except as stated in this section) patent license to 
+   make, have made, use, offer to sell, sell, import, and otherwise transfer 
+   the Software. This license applies only to those patent claims licensable 
+   by Licensor that are necessarily infringed by their Contribution(s) 
+   alone or by combination of their Contribution(s) with the Software.
+
+4. ATTRIBUTION AND RETENTION
+
+   Any redistribution of the Software or Derivative Works must comply with 
+   the following:
+   
+   (a) You must give any other recipients of the Software or Derivative 
+       Works a copy of this License; and
+   (b) You must retain, in the Source form of any Derivative Works that 
+       You distribute, all copyright, patent, trademark, and attribution 
+       notices from the Source form of the Software, excluding those notices 
+       that do not pertain to any part of the Derivative Works.
+
+5. TRADEMARK AND BRAND PROTECTION
+
+   This License does not grant permission to use the trade names, trademarks, 
+   service marks, or product names of the Licensor, specifically "AevumDB," 
+   except as required for reasonable and customary use in describing the 
+   origin of the Software and reproducing the content of the NOTICE file.
+   
+   Any Derivative Works, forks, or modified versions distributed to the 
+   public must be clearly marked and renamed to strictly avoid confusion 
+   with the official AevumDB releases. You may not imply endorsement or 
+   affiliation with the official AevumDB organization without prior 
+   written permission.
+
+6. BENCHMARKING AND PERFORMANCE DISCLOSURE
+
+   To maintain the integrity of performance claims regarding the Software, 
+   which is optimized for high-performance environments, any public 
+   disclosure of benchmarks or performance comparisons involving the 
+   Software must:
+   
+   (a) Explicitly adhere to reproducible standards, stating the specific 
+       version or commit hash used;
+   (b) Fully disclose the hardware specifications, operating system, and 
+       configuration parameters of the testing environment; and
+   (c) Provide a clear and visible reference to the official AevumDB 
+       repository.
+
+   Failure to adhere to these transparency standards when publishing 
+   performance claims constitutes a material breach of this License.
+
+7. TERMINATION
+
+   This License and the rights granted hereunder will terminate automatically 
+   if You fail to comply with any of its terms. Furthermore, if You institute 
+   patent litigation against any entity (including a cross-claim or 
+   counterclaim in a lawsuit) alleging that the Software or a Contribution 
+   incorporated within the Software constitutes direct or contributory 
+   patent infringement, then any patent licenses granted to You under this 
+   License for that Software shall terminate as of the date such litigation 
+   is filed.
+
+8. DISCLAIMER OF WARRANTY
+
+   UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, LICENSOR 
+   PROVIDES THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER 
+   EXPRESS OR IMPLIED, INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR 
+   CONDITIONS OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR 
+   A PARTICULAR PURPOSE. YOU ARE SOLELY RESPONSIBLE FOR DETERMINING THE 
+   APPROPRIATENESS OF USING OR REDISTRIBUTING THE SOFTWARE AND ASSUME ANY 
+   RISKS ASSOCIATED WITH YOUR EXERCISE OF PERMISSIONS UNDER THIS LICENSE.
+
+9. LIMITATION OF LIABILITY
+
+   IN NO EVENT AND UNDER NO LEGAL THEORY, WHETHER IN TORT (INCLUDING 
+   NEGLIGENCE), CONTRACT, OR OTHERWISE, UNLESS REQUIRED BY APPLICABLE LAW 
+   (SUCH AS DELIBERATE AND GROSSLY NEGLIGENT ACTS) OR AGREED TO IN WRITING, 
+   SHALL LICENSOR BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY DIRECT, 
+   INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER 
+   ARISING AS A RESULT OF THIS LICENSE OR OUT OF THE USE OR INABILITY TO 
+   USE THE SOFTWARE (INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOSS OF 
+   GOODWILL, WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND 
+   ALL OTHER COMMERCIAL DAMAGES OR LOSSES).
+
+END OF AEVUMDB COMMUNITY LICENSE TERMS

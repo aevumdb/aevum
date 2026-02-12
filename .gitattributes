@@ -1,0 +1,28 @@
+# Handle line endings automatically
+* text=auto eol=lf
+
+# Explicitly mark C++ files
+*.cpp text diff=cpp
+*.hpp text diff=cpp
+*.h   text diff=cpp
+
+# Explicitly mark Rust files
+*.rs  text diff=rust
+*.toml text
+
+# Mark build scripts
+*.cmake text
+CMakeLists.txt text
+
+# Mark documentation
+*.md text
+LICENSE text
+
+# Treat binary files as binary
+*.aev binary
+*.png binary
+*.jpg binary
+*.ico binary
+
+# Ensure shell scripts use LF
+*.sh text eol=lf

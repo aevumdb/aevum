@@ -1,0 +1,8 @@
+# Disable blank issue creation to encourage structured issue reporting
+blank_issues_enabled: false
+
+contact_links:
+  # Redirect questions and support requests to GitHub Discussions
+  - name: "Questions & Support"
+    url: https://github.com/aevumdb/aevum/discussions
+    about: "Please use GitHub Discussions for questions, support, and general discussion about AevumDB."

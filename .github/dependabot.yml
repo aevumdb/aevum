@@ -1,0 +1,24 @@
+# Automated dependency management for the AevumDB kernel.
+
+version: 2
+
+updates:
+  # 1. Rust (Cargo) Logic Engine Dependencies
+  - package-ecosystem: "cargo"
+    directory: "/aevum_logic"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "rust"
+
+  # 2. GitHub Actions Security Updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"

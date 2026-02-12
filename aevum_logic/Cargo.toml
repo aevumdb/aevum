@@ -1,0 +1,67 @@
+[package]
+name = "aevum_logic"
+version = "1.0.0"
+edition = "2021"
+
+# Project Governance: Maintained by the AevumDB Organization.
+authors = ["AevumDB Organization <https://github.com/aevumdb>"]
+
+# Metadata: High-level overview for the Rust ecosystem.
+description = """
+The core logic evaluation engine for AevumDB. 
+Features a deterministic JSON processor optimized for system-level 
+integration with zero-overhead FFI boundaries and memory safety.
+"""
+
+# Project Links
+repository = "https://github.com/aevumdb/aevum"
+homepage = "https://aevumdb.org"
+documentation = "https://docs.aevumdb.org"
+
+# Licensing: Uses the custom AevumDB Community License.
+license-file = "LICENSE"
+
+# Deployment Safety: Prevents accidental publishing to crates.io.
+publish = false
+
+[lib]
+name = "aevum_logic"
+
+# Compilation Targets:
+# 1. staticlib: Enables linking into C/C++ AevumDB core.
+# 2. rlib: Enables standard Rust integration for testing/benchmarking.
+crate-type = ["staticlib", "rlib"]
+
+[dependencies]
+# FFI Support: Provides C-compatible types for stable ABI communication.
+libc = "0.2"
+
+# Data Modeling: Core serialization framework with compile-time derive macros.
+serde = { version = "1.0", features = ["derive"] }
+
+# Data Format: High-performance JSON manipulation for AevumDB's logic layer.
+serde_json = "1.0"
+
+[profile.release]
+# Optimization Strategy:
+# 3 = Maximize speed.
+opt-level = 3
+
+# Link-Time Optimization (LTO): 
+# Performs optimizations across all crates in the dependency graph.
+lto = true
+
+# Determinism & Performance:
+# Setting codegen-units to 1 maximizes the compiler's ability to optimize
+# but results in slower compile times.
+codegen-units = 1
+
+# Error Handling:
+# 'abort' reduces binary size and improves performance by removing 
+# stack unwinding logic, ideal for embedded system-level libraries.
+panic = "abort"
+
+# Binary Hygiene:
+# Automatically strips symbols and debug info to keep the final 
+# static library lightweight for the production runtime.
+strip = true

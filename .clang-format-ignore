@@ -1,0 +1,11 @@
+# Exclude third-party libraries (Keep original formatting)
+third_party/
+
+# Exclude build artifacts and binary logs
+build/
+target/
+*.aev
+*.aev.tmp
+
+# Exclude Rust specific directories
+aevum_logic/

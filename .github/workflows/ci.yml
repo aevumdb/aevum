@@ -1,0 +1,88 @@
+# AevumDB Continuous Integration Pipeline
+# This workflow sets up a CI pipeline for the AevumDB project.
+# It performs builds, code quality checks, and runs tests for both
+# the C++ and Rust components on every push and pull request.
+
+name: AevumDB CI
+
+on:
+  push:
+    branches:
+      - '**'        # Trigger the workflow on all branch pushes
+  pull_request:
+    branches:
+      - '**'        # Trigger the workflow on all pull requests
+
+jobs:
+  build-and-test:
+    name: Build and Test (Ubuntu Latest)
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Environment Setup
+      # Checks out the repository code and initializes submodules.
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # Essential for third_party/cJSON dependency
+
+      # Installs necessary system dependencies for building C++ components.
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake clang-format build-essential
+
+      # Sets up the Rust toolchain, including rustfmt and clippy for code quality.
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      # Step 2: Code Quality & Linting
+      # Enforces strict formatting rules and performs static analysis for both languages.
+
+      # Verifies that all Rust code adheres to the defined formatting standards.
+      - name: Verify Rust Formatting
+        run: cargo fmt --all -- --check
+        working-directory: ./aevum_logic
+
+      # Verifies that all C++ code adheres to the defined formatting standards.
+      # The --Werror flag ensures that any formatting warnings will cause the check to fail.
+      - name: Verify C++ Formatting
+        run: |
+          find src include tests -type f \( -name "*.cpp" -o -name "*.hpp" -o -name "*.h" \) | xargs clang-format --dry-run --Werror
+
+      # Step 3: Build Subsystems
+      # Compiles the AevumDB project, including both Rust and C++ components.
+
+      # Builds the Rust logic engine in release mode to produce the static library.
+      - name: Build Rust Logic Engine (Release)
+        run: cargo build --release
+        working-directory: ./aevum_logic
+
+      # Configures the CMake project in a 'build' directory.
+      - name: Configure CMake
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+
+      # Compiles the AevumDB C++ kernel using all available processor cores.
+      - name: Compile AevumDB C++ Kernel
+        run: cmake --build build --config Release -j$(nproc)
+
+      # Step 4: Test Execution
+      # Runs all unit and integration tests for both the C++ and Rust components.
+
+      # Executes all Rust unit and integration tests.
+      - name: Run Rust Tests
+        run: cargo test
+        working-directory: ./aevum_logic
+
+      # Executes the unified CTest suite, which includes all C++ unit tests.
+      # The --output-on-failure flag prints test output only for failing tests.
+      - name: Execute C++ Test Suite
+        run: |
+          cd build
+          ctest --output-on-failure
+          

@@ -1,0 +1,42 @@
+# Standardized C++ style configuration
+
+BasedOnStyle: LLVM
+Language: Cpp
+
+# Indentation and Line Limits
+IndentWidth: 4
+ColumnLimit: 100
+Standard: Latest
+
+# Namespace Configuration
+NamespaceIndentation: None
+FixNamespaceComments: true
+
+# Function and Block Behavior
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+
+# Braces and Spacing
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: false
+  AfterControlStatement: false
+  AfterEnum: false
+  AfterFunction: true
+  AfterNamespace: false
+  AfterStruct: false
+  BeforeElse: false
+  BeforeLambdaBody: false
+  BeforeWhile: false
+  IndentBraces: false
+
+# Pointer and Alignment
+PointerAlignment: Left
+AlignAfterOpenBracket: Align
+AlignOperands: true
+AlignTrailingComments: true
+
+# Header Management
+SortIncludes: true
+IncludeBlocks: Regroup

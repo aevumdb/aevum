@@ -1,0 +1,42 @@
+# Build and Output
+build/
+target/
+bin/
+lib/
+out/
+
+# Rust Specific
+aev_logic/target/
+**/*.rs.bk
+Cargo.lock
+
+# CMake Artifacts
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+
+# Local Database Storage
+production/
+development/
+aevum_data/
+test_db_unit/
+handler_test_db/
+*.aev
+*.aev.tmp
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+*.user
+
+# System and Temporary Files
+*.log
+*.tmp

@@ -10,7 +10,7 @@ message(STATUS "  Configuring AevumDB Kernel Test Suite")
 message(STATUS "───────────────────────────────────────────────────")
 
 # --- Include & Dependencies ---
-# Mewarisi header dari direktori include utama, internal tests, dan vendor cJSON
+# Inherit headers from main include directory, internal tests, and cJSON vendor
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -18,26 +18,27 @@ include_directories(
 )
 
 # --- Test Source Management ---
-# Mengumpulkan semua unit test (infra, ffi, storage, network) secara rekursif
+# Collect all unit tests (infra, ffi, storage, network) recursively
 file(GLOB_RECURSE TEST_SOURCES "*.cpp")
 
-# Validasi awal: Pastikan suite pengujian tidak kosong
+# Initial validation: Ensure the test suite is not empty
 if(NOT TEST_SOURCES)
     message(FATAL_ERROR "  [CRIT] No test source files (.cpp) detected in tests directory.")
 endif()
 
 # --- Test Build Targets ---
-# Membuat executable 'aevum_tests' sebagai runner utama.
-# PROJECT_SOURCES dan CJSON_SOURCES diwariskan dari root CMakeLists.txt.
-add_executable(aevum_tests 
-    ${TEST_SOURCES} 
-    ${PROJECT_SOURCES} 
+# Create 'aevum_tests' executable as the main runner.
+# PROJECT_SOURCES and CJSON_SOURCES are inherited from the root CMakeLists.txt.
+add_executable(aevum_tests
+    ${TEST_SOURCES}
+    ${PROJECT_SOURCES}
     ${CJSON_SOURCES}
 )
 
+# Ensure the Rust static library is built before compiling and linking the C++ test executable.
+add_dependencies(aevum_tests rust_build)
 # --- Link Libraries ---
-# Menghubungkan test runner dengan modul statis Rust dan dependensi sistem operasi.
-# 
+# Link the test runner with the Rust static module and operating system dependencies. 
 target_link_libraries(aevum_tests 
     PRIVATE 
     ${RUST_STATIC_LIB} 
@@ -47,8 +48,8 @@ target_link_libraries(aevum_tests
 )
 
 # --- CTest Integration ---
-# Mendaftarkan executable ke dalam CTest framework.
-# Memungkinkan otomasi pengujian via perintah 'ctest' pada pipeline CI/CD.
+# Register the executable within the CTest framework.
+# Enables test automation via 'ctest' command in CI/CD pipelines.
 add_test(NAME RunKernelTests COMMAND aevum_tests)
 
 # --- Post-Configuration Diagnostics ---

@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachanglog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-02-13
+
+### Fixed
+- Resolved build failure where C++ tests (`aevum_tests`) could not find the Rust static library (`libaevum_logic.a`) by ensuring the Rust build (`rust_build` target) completes before C++ tests are compiled and linked.
+
 ## [1.1.0] - 2026-02-12
 
 ### Added

@@ -3,13 +3,13 @@
 # ------------------------------------------------------------------------------
 # Target: High-performance C++/Rust Hybrid NoSQL Engine
 # Author: Ananda Firmansyah
-# Version: 1.0.0 (Aevum Community License)
+# Version: 1.1.1 (Aevum Community License)
 # ------------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.15)
 
 project(aevum 
-    VERSION 1.0.0 
+    VERSION 1.1.1
     LANGUAGES C CXX
 )
 

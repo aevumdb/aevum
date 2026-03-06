@@ -14,6 +14,7 @@ Clone and build from source:
 ```bash
 git clone https://github.com/aevumdb/aevum.git
 cd aevum
+chmod +x ./scripts/build.sh ./scripts/build/build.sh
 ./scripts/build.sh
 ```
 

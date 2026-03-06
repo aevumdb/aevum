@@ -4,21 +4,21 @@ This directory contains GitHub-specific workflows, templates, and configuration 
 
 ## Contents
 
-### Workflows (`.github/workflows/`)
+### Workflows ([`../.github/workflows/`](../.github/workflows/))
 - `ci.yml` - Continuous Integration pipeline
   - Builds on Ubuntu and macOS
   - Tests with GCC and Clang compilers
   - Runs code formatting checks
   - Performs security scans
 
-### Templates (`.github/ISSUE_TEMPLATE/` and `.github/`)
-- `ISSUE_TEMPLATE/bug_report.md` - Bug report template
-- `ISSUE_TEMPLATE/feature_request.md` - Feature request template
-- `ISSUE_TEMPLATE/documentation.md` - Documentation improvement template
+### Templates ([`../.github/ISSUE_TEMPLATE/`](../.github/ISSUE_TEMPLATE/) and [`../.github/`](../.github/))
+- `bug_report.md` - Bug report template
+- `feature_request.md` - Feature request template
+- `documentation.md` - Documentation improvement template
 - `PULL_REQUEST_TEMPLATE.md` - Pull request template
 
 ### Configuration
-- `dependabot.yml` - Dependency update automation
+- [`dependabot.yml`](../.github/dependabot.yml) - Dependency update automation
   - Weekly GitHub Actions updates
   - Automatic security updates
   - Pull request limits to avoid spam

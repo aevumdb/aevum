@@ -33,6 +33,7 @@ Welcome to AevumDB - a document database designed for simplicity and performance
 - **[Project Structure](PROJECT_STRUCTURE.md)** - Directory layout explained
 - **[Scripts](SCRIPTS.md)** - Build and utility scripts
 - **[Third-Party Libraries](THIRD_PARTY.md)** - External dependencies
+- **[GitHub Configuration](GITHUB_CONFIG.md)** - CI/CD workflows and GitHub setup
 
 ## Quick Command Examples
 
@@ -106,7 +107,9 @@ docs/
 ├── BUILDING.md
 ├── DEPLOYMENT.md
 ├── API.md
-└── TROUBLESHOOTING.md
+├── TROUBLESHOOTING.md
+├── GITHUB_CONFIG.md
+└── PROJECT_STRUCTURE.md
 ```
 
 ## Documentation by Role

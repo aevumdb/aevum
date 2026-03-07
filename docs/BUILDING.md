@@ -5,6 +5,7 @@ Complete guide to building AevumDB from source with various configuration option
 ## Quick Build
 
 ```bash
+chmod +x ./scripts/build.sh ./scripts/build/build.sh
 ./scripts/build.sh
 ```
 
@@ -21,7 +22,7 @@ git clone --recursive https://github.com/aevumdb/aevum.git
 
 ```bash
 sudo apt update
-sudo apt install -y build-essential cmake g++ git python3 pkg-config
+sudo apt install -y build-essential cmake g++ git python3 pkg-config cargo
 ```
 
 ### macOS
@@ -31,13 +32,13 @@ sudo apt install -y build-essential cmake g++ git python3 pkg-config
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install dependencies
-brew install cmake g++ python3 pkg-config
+brew install cmake g++ python3 pkg-config rust
 ```
 
 ### Fedora/RHEL
 
 ```bash
-sudo dnf install -y cmake gcc-c++ git python3 pkgconfig
+sudo dnf install -y cmake gcc-c++ git python3 pkgconfig cargo
 ```
 
 ## Build Process

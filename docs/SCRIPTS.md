@@ -41,23 +41,25 @@ Main build orchestrator script. Handles CMake configuration, compilation, and ou
 - `verbose` - Build with verbose output
 - `help` - Show this message
 
+**Options**:
+- `-j N` - Build with `N` parallel jobs (e.g., `-j 4`)
+
 **What it does**:
 1. Creates `build/` directory if not present
 2. Runs `cmake ..` to configure
-3. Runs `make -j$(nproc)` to compile
+3. Runs `make -j N` (default uses all available cores)
 4. Outputs binaries to `build/bin/`
 
 **Example**:
 ```bash
-# Standard build
+# Standard build using all cores
 ./scripts/build.sh
-# Output: build/bin/aevumdb and build/bin/aevumsh
+
+# Build with specifically 4 parallel jobs
+./scripts/build.sh -j 4
 
 # Verbose build to see compiler output
 ./scripts/build.sh verbose
-
-# Clean rebuild
-./scripts/build.sh rebuild
 ```
 
 ### scripts/build/build.sh

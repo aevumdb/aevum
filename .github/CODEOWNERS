@@ -9,6 +9,9 @@
 /src/aevum/db/ @aevumdb-team
 /src/aevum/db/core/ @aevumdb-team
 /src/aevum/db/storage/ @aevumdb-team
+/src/aevum/db/auth/ @aevumdb-team
+/src/aevum/db/schema/ @aevumdb-team
+/src/aevum/db/index/ @aevumdb-team
 
 # Shell and CLI
 /src/aevum/shell/ @aevumdb-team
@@ -17,25 +20,62 @@
 
 # BSON and serialization
 /src/aevum/bson/ @aevumdb-team
+/src/aevum/bson/doc/ @aevumdb-team
+/src/aevum/bson/json/ @aevumdb-team
+
+# Foreign Function Interface (Rust)
+/src/aevum/ffi/ @aevumdb-team
 
 # Client library
 /src/aevum/client/ @aevumdb-team
+/src/aevum/client/net/ @aevumdb-team
 
 # Utilities
 /src/aevum/util/ @aevumdb-team
+/src/aevum/util/log/ @aevumdb-team
+/src/aevum/util/memory/ @aevumdb-team
+/src/aevum/util/string/ @aevumdb-team
 
-# Build system
+# Build system and configuration
 /CMakeLists.txt @aevumdb-team
 /scripts/ @aevumdb-team
+/.clang-format @aevumdb-team
+/.clang-format-ignore @aevumdb-team
+/.clang-tidy.in @aevumdb-team
+/.editorconfig @aevumdb-team
+/.gitattributes @aevumdb-team
+/.gitignore @aevumdb-team
+/.gitmodules @aevumdb-team
 
 # Documentation
 /docs/ @aevumdb-team
 /README.md @aevumdb-team
 /CONTRIBUTING.md @aevumdb-team
+/CHANGELOG.md @aevumdb-team
+/AUTHORS.md @aevumdb-team
+/CONTRIBUTORS.md @aevumdb-team
+/CODE_OF_CONDUCT.md @aevumdb-team
+/SECURITY.md @aevumdb-team
+/SUPPORT.md @aevumdb-team
 
-# GitHub workflows
+# Project metadata and licensing
+/LICENSE @aevumdb-team
+/SECURITY.md @aevumdb-team
+
+# GitHub configuration and workflows
+/.github/ @aevumdb-team
 /.github/workflows/ @aevumdb-team
+/.github/ISSUE_TEMPLATE/ @aevumdb-team
+/.github/PULL_REQUEST_TEMPLATE.md @aevumdb-team
+/.github/CODEOWNERS @aevumdb-team
 
 # Tests
 /**/test/ @aevumdb-team
 /**/tests/ @aevumdb-team
+/src/aevum/ffi/tests/ @aevumdb-team
+
+# Third party dependencies (monitor for security updates)
+/third_party/ @aevumdb-team
+/third_party/wiredtiger/ @aevumdb-team
+/third_party/mongo-c-driver/ @aevumdb-team
+/third_party/simdjson/ @aevumdb-team

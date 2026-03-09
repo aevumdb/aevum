@@ -14,6 +14,11 @@ Thank you for your interest in contributing to AevumDB! We welcome contributions
 ```bash
 git clone https://github.com/aevumdb/aevum.git
 cd aevum
+
+# Make scripts executable
+chmod +x ./scripts/*.sh ./scripts/*/*.sh
+
+# Build the project
 ./scripts/build.sh
 ```
 

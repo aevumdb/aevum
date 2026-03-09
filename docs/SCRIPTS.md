@@ -460,16 +460,19 @@ export MAKEFLAGS="-j2"
 ### Permission denied on script
 
 ```bash
-# Make script executable
+# Make all scripts executable
 chmod +x ./scripts/build.sh
 chmod +x ./scripts/format.sh
+chmod +x ./scripts/test.sh
+chmod +x ./scripts/lint.sh
 chmod -R +x ./scripts/build/
 chmod -R +x ./scripts/format/
+chmod -R +x ./scripts/test/
+chmod -R +x ./scripts/lint/
 
-# Or add during clone
-git clone https://github.com/aevumdb/aevum.git
+# Or with one command after clone
 cd aevum
-chmod +x ./scripts/build.sh ./scripts/format.sh
+chmod +x ./scripts/*.sh ./scripts/*/*.sh
 ```
 
 ## Git Integration

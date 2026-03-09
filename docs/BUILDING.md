@@ -6,6 +6,9 @@ Complete guide to building AevumDB from source with various configuration option
 
 ```bash
 chmod +x ./scripts/build.sh ./scripts/build/build.sh
+chmod +x ./scripts/format.sh ./scripts/format/format*.sh
+chmod +x ./scripts/test.sh ./scripts/test/test.sh
+chmod +x ./scripts/lint.sh ./scripts/lint/lint.sh
 ./scripts/build.sh
 ```
 

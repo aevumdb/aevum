@@ -18,6 +18,9 @@ Get AevumDB running in 5 minutes and start using it immediately!
 git clone https://github.com/aevumdb/aevum.git
 cd aevum
 
+# Make scripts executable
+chmod +x ./scripts/*.sh ./scripts/*/*.sh
+
 # Build AevumDB
 ./scripts/build.sh
 ```

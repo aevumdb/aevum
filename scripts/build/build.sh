@@ -85,7 +85,7 @@ cd "$BUILD_DIR"
 echo ""
 echo "Configuring AevumDB with CMake..."
 echo ""
-cmake "$PROJECT_ROOT"
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$PROJECT_ROOT"
 
 # Build the project
 echo ""

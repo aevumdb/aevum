@@ -73,7 +73,8 @@ Fixes #123
 4. Test your changes thoroughly
 5. Format code: `./scripts/format.sh`
 6. Run tests: `./scripts/test.sh` (for FFI changes)
-7. Build successfully: `./scripts/build.sh`
+7. Lint code: `./scripts/lint.sh` (for C++ code analysis)
+8. Build successfully: `./scripts/build.sh`
 
 ### Testing
 

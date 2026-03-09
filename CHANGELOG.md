@@ -5,6 +5,25 @@ All notable changes to AevumDB are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-03-10
+
+### Added
+- Code analysis and linting script suite
+- `scripts/lint.sh` - Main lint orchestrator for clang-tidy analysis
+- `scripts/lint/lint.sh` - Core implementation for C++ code analysis
+- Support for auto-fixing code issues with `--fix` flag
+
+### Fixed
+- Fixed CMake configuration to export compile commands for clang-tidy support
+- Updated build script to generate `compile_commands.json` needed by lint tools
+
+### Updated
+- Enhanced SCRIPTS.md documentation with lint script details
+- Expanded CODEOWNERS with comprehensive path coverage
+- Updated CONTRIBUTING.md with linting guidelines
+- Updated PR template with linting checklist
+- Focused documentation on Linux platform (Ubuntu, Fedora, Debian)
+
 ## [1.0.2] - 2026-03-09
 
 ### Added
@@ -16,8 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Updated
 - Enhanced SCRIPTS.md documentation with test script details
 - Updated DEVELOPMENT.md testing section with FFI test procedures
+- Updated directory structure documentation to include test folder
 - Added test script checklist to PR template
 - Improved CONTRIBUTING.md with testing guidelines
+- Expanded CODEOWNERS with comprehensive path coverage
 
 ## [1.0.1] - 2026-03-07
 
@@ -55,7 +76,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
-- `1.0.2` - Test script suite and documentation updates (March 9, 2026)
+- `1.0.3` - Code linting script suite (March 10, 2026)
+- `1.0.2` - Test script and documentation updates (March 9, 2026)
 - `1.0.1` - Build system and CI configuration fixes (March 7, 2026)
 - `1.0.0` - Initial public release (March 7, 2026)
 

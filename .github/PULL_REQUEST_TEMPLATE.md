@@ -38,6 +38,7 @@ Please describe the tests that you ran to verify your changes.
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] New and existing unit tests passed locally with my changes
 - [ ] Code formatting: `./scripts/format.sh cpp`
+- [ ] Code analysis: `./scripts/lint.sh` (C++ code)
 - [ ] FFI tests pass (if applicable): `./scripts/test.sh`
 
 ## Additional Context

@@ -20,6 +20,9 @@ AevumDB includes utility scripts for building, formatting code, and development 
 # Run FFI tests
 ./scripts/test.sh
 
+# Run code analysis and linting
+./scripts/lint.sh
+
 # Show help
 ./scripts/build.sh --help
 ```
@@ -248,6 +251,77 @@ Core test logic. Called by `scripts/test.sh`.
 
 **Usually called automatically** - Use `./scripts/test.sh` instead.
 
+## Lint Scripts
+
+### scripts/lint.sh
+
+Lint orchestrator script. Runs clang-tidy static analysis and code quality checks on AevumDB.
+
+**Location**: `/scripts/lint.sh`
+
+**Usage**:
+```bash
+./scripts/lint.sh [TARGET] [OPTIONS]
+```
+
+**What it does**:
+1. Validates build artifacts exist (compile_commands.json)
+2. Checks for clang-tidy installation
+3. Runs clang-tidy analysis on C++ source code
+4. Reports potential bugs, style issues, and modernization opportunities
+5. Supports auto-fixing where applicable
+
+**Targets**:
+- `(default)` - Analyze all C++ files in `src/aevum/`
+- `src/aevum/db/` - Analyze specific directory
+- `src/aevum/main.cpp` - Analyze specific file
+
+**Options**:
+- `--fix` - Automatically fix issues where possible
+- `--checks=CHECK_NAME` - Run specific checks only
+
+**Requirements**:
+- Project must be built first: `./scripts/build.sh`
+- clang-tools installed (includes clang-tidy)
+
+**Example**:
+```bash
+# Run all checks
+./scripts/lint.sh
+
+# Check specific directory
+./scripts/lint.sh src/aevum/db/
+
+# Check specific file
+./scripts/lint.sh src/aevum/main.cpp
+
+# Auto-fix issues
+./scripts/lint.sh --fix
+
+# Run specific checks
+./scripts/lint.sh --checks=modernize-*
+```
+
+### scripts/lint/lint.sh
+
+Core lint logic. Called by `scripts/lint.sh`.
+
+**Location**: `/scripts/lint/lint.sh`
+
+**What it does**:
+1. Verifies `compile_commands.json` exists from build
+2. Checks if clang-tidy is available
+3. Parses command-line arguments and targets
+4. Executes clang-tidy with appropriate checks
+5. Reports analysis results
+
+**Requirements**:
+- Build directory with `compile_commands.json`
+- clang-tidy executable in PATH
+- `.clang-tidy` configuration file in project root
+
+**Usually called automatically** - Use `./scripts/lint.sh` instead.
+
 ## Directory Structure
 
 ```
@@ -255,6 +329,7 @@ scripts/
 ├── build.sh                 # Main build script (user-facing)
 ├── format.sh                # Main format script (user-facing)
 ├── test.sh                  # Main test script (user-facing)
+├── lint.sh                  # Main lint script (user-facing)
 │
 ├── build/
 │   └── build.sh            # Build implementation
@@ -264,8 +339,11 @@ scripts/
 │   ├── format-cpp.sh       # C++ formatting
 │   └── format-rust.sh      # Rust formatting
 │
-└── test/
-    └── test.sh             # Test implementation
+├── test/
+│   └── test.sh             # Test implementation
+│
+└── lint/
+    └── lint.sh             # Lint/analysis implementation
 ```
 
 ## Common Tasks
@@ -297,9 +375,12 @@ make -j$(nproc)
 # Or just C++
 ./scripts/format.sh cpp
 
+# Lint all C++ code
+./scripts/lint.sh
+
 # Then commit
 git add .
-git commit -m "style: format code"
+git commit -m "style: format and lint code"
 ```
 
 ### Clean Rebuild

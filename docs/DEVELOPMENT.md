@@ -184,6 +184,11 @@ Status myFunction(std::string_view param1) {
 ./scripts/format.sh cpp
 ```
 
+**Code analysis and linting**:
+```bash
+./scripts/lint.sh
+```
+
 ## Building & Testing
 
 ### Build Debug Version

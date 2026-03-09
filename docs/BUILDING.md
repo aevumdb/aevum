@@ -212,7 +212,7 @@ echo "db.test.insert({name: \"test\"})" | ./build/bin/aevumsh
 kill $DAEMON_PID
 ```
 
-## Code Formatting
+## Code Formatting and Analysis
 
 Before committing code:
 
@@ -227,8 +227,19 @@ Before committing code:
 ./scripts/format.sh
 ```
 
+Run code analysis and linting:
+
+```bash
+# Analyze all C++ code
+./scripts/lint.sh
+
+# Fix issues automatically where possible
+./scripts/lint.sh --fix
+```
+
 Requirements:
 - **C++**: clang-format (installed via build-essential/development tools)
+- **C++ Analysis**: clang-tidy (installed via clang-tools)
 - **Rust**: rustfmt (installed with Rust toolchain)
 
 ## Common Build Issues

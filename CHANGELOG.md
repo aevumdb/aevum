@@ -5,6 +5,18 @@ All notable changes to AevumDB are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-03-11
+
+### Added
+- `clear` command to the interactive shell for terminal screen management.
+- Comprehensive documentation updates for shell built-in commands.
+
+### Updated
+- `src/aevum/shell/repl/repl.cpp` - Enhanced REPL logic and internal help output.
+- `docs/SHELL_REFERENCE.md` - Expanded documentation for built-in shell operations.
+- `docs/GETTING_STARTED.md` - Added usage examples for shell built-in commands.
+- `docs/README.md` - Synchronized documentation metadata.
+
 ## [1.0.3] - 2026-03-10
 
 ### Added
@@ -76,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- `1.1.0` - Shell improvements and 'clear' command (March 11, 2026)
 - `1.0.3` - Code linting script suite (March 10, 2026)
 - `1.0.2` - Test script and documentation updates (March 9, 2026)
 - `1.0.1` - Build system and CI configuration fixes (March 7, 2026)

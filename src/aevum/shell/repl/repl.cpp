@@ -46,6 +46,7 @@ void print_help() {
            "ADMIN\n\n"
         << "Shell Built-in Commands:\n"
         << "  help                                            - Displays this manual.\n"
+        << "  clear                                           - Clears the terminal screen.\n"
         << "  exit | quit                                     - Terminates the session.\n"
         << "--------------------------------------------------------------------------------\n";
 }
@@ -89,6 +90,10 @@ void run(client::AevumClient &client) {
         }
         if (trimmed_line == "help") {
             print_help();
+            continue;
+        }
+        if (trimmed_line == "clear") {
+            std::cout << "\033[H\033[2J";
             continue;
         }
 

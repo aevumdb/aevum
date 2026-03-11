@@ -288,6 +288,14 @@ AevumDB Interactive Shell - Command Reference
 ...
 ```
 
+### clear
+
+Clears the terminal screen.
+
+```bash
+> clear
+```
+
 ### exit / quit
 
 Terminate the shell session.

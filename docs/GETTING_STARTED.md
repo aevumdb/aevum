@@ -89,6 +89,9 @@ Success: 1 document(s) removed.
 # Get help
 > help
 
+# Clear screen
+> clear
+
 # Exit
 > exit
 ```
@@ -143,6 +146,9 @@ Once connected to the shell:
 ```bash
 # View all commands
 help
+
+# Clear screen
+clear
 
 # Insert data
 db.myCollection.insert({field1: "value1", field2: 42})

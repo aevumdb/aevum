@@ -5,6 +5,20 @@ All notable changes to AevumDB are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-03-12
+
+### Added
+- Automated dependency check and installation in `scripts/build/build.sh`.
+- Support for automatic installation of C/C++ compilers, Rust, and CMake across Arch, Debian/Ubuntu, and Fedora.
+
+### Updated
+- `scripts/build/build.sh` - Integrated `check_and_install_deps` function for a smoother developer experience on fresh systems.
+- `README.md` - Added note about automated dependency installation.
+- `docs/BUILDING.md` - Updated with automated dependency information and simplified build instructions.
+- `docs/SCRIPTS.md` - Documented new dependency detection logic in build scripts.
+- `docs/GETTING_STARTED.md` - Added prerequisite automation notes.
+- `docs/DEVELOPMENT.md` - Simplified dependency setup for new contributors.
+
 ## [1.1.0] - 2026-03-11
 
 ### Added
@@ -88,6 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- `1.1.1` - Automated dependency installation (March 12, 2026)
 - `1.1.0` - Shell improvements and 'clear' command (March 11, 2026)
 - `1.0.3` - Code linting script suite (March 10, 2026)
 - `1.0.2` - Test script and documentation updates (March 9, 2026)

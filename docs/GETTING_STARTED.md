@@ -6,8 +6,8 @@ Get AevumDB running in 5 minutes and start using it immediately!
 
 - **Linux** (Ubuntu 20.04+, Fedora 33+, or other Linux distributions)
 - **Git**
-- **Build tools**: CMake 3.21+, C++17 compiler (g++), Make
-- **WiredTiger dependencies**: Python 3, pkg-config
+
+**Note**: The AevumDB build script (`./scripts/build.sh`) automatically detects and installs missing compilers, Rust, and CMake for you on Arch, Debian/Ubuntu, and Fedora.
 
 ## Installation
 
@@ -112,6 +112,13 @@ Success: 1 document(s) removed.
 - **[API Reference](API.md)** - Programmatic C++ API
 
 ## Troubleshooting
+
+### Missing Dependencies (Compiler, Rust, CMake)
+If you don't have C++ compilers, Rust, or CMake installed, just run:
+```bash
+./scripts/build.sh
+```
+The script will attempt to install them for you using your system's package manager.
 
 ### Port already in use
 If port 55001 is already taken:

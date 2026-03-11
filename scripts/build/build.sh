@@ -21,6 +21,59 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." &> /dev/null && pwd)"
 BUILD_DIR="${PROJECT_ROOT}/build"
 
+# Function to check and install missing dependencies
+check_and_install_deps() {
+    local missing_deps=()
+    
+    # Check for C/C++ compilers
+    if ! command -v cc &> /dev/null || ! command -v c++ &> /dev/null; then
+        missing_deps+=("compiler")
+    fi
+    
+    # Check for Rust
+    if ! command -v rustc &> /dev/null; then
+        missing_deps+=("rust")
+    fi
+
+    # Check for CMake
+    if ! command -v cmake &> /dev/null; then
+        missing_deps+=("cmake")
+    fi
+
+    if [ ${#missing_deps[@]} -eq 0 ]; then
+        return 0
+    fi
+
+    echo "Missing dependencies: ${missing_deps[*]}"
+    echo "Attempting to install missing tools..."
+
+    # Detect package manager
+    if command -v pacman &> /dev/null; then
+        echo "Detected Arch Linux (pacman)"
+        sudo pacman -S --noconfirm base-devel rustup cmake
+        rustup default stable
+    elif command -v apt-get &> /dev/null; then
+        echo "Detected Debian/Ubuntu (apt-get)"
+        sudo apt-get update
+        sudo apt-get install -y build-essential curl cmake
+        # Install Rust via rustup if not available via apt
+        if ! command -v rustc &> /dev/null; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+            source "$HOME/.cargo/env"
+        fi
+    elif command -v dnf &> /dev/null; then
+        echo "Detected Fedora/RHEL (dnf)"
+        sudo dnf groupinstall -y "Development Tools"
+        sudo dnf install -y cmake rust cargo
+    else
+        echo "Error: Unknown package manager. Please install C/C++ compilers, Rust, and CMake manually."
+        exit 1
+    fi
+}
+
+# Ensure dependencies are installed
+check_and_install_deps
+
 # Default number of parallel jobs (use all available cores)
 JOBS=$(nproc 2>/dev/null || echo 4)
 

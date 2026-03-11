@@ -75,6 +75,7 @@ Core build logic. Called by `scripts/build.sh`.
 **Location**: `/scripts/build/build.sh`
 
 **What it does**:
+- Detects missing dependencies (`cc`, `c++`, `rustc`, `cmake`) and installs them automatically on supported systems (Arch, Debian/Ubuntu, Fedora).
 - Detects build type (Debug/Release)
 - Creates build directory
 - Runs CMake with appropriate flags
@@ -417,6 +418,14 @@ export CXX=g++
 ```
 
 ## Troubleshooting
+
+### Missing Dependencies (Compiler, Rust, CMake)
+
+The easiest fix is to let `scripts/build.sh` handle it for you:
+```bash
+./scripts/build.sh
+```
+It supports **Arch Linux (pacman)**, **Ubuntu/Debian (apt)**, and **Fedora (dnf)**.
 
 ### Build fails: "CMake not found"
 

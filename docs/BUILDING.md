@@ -4,22 +4,27 @@ Complete guide to building AevumDB from source with various configuration option
 
 ## Quick Build
 
+AevumDB includes a smart build script that automatically detects and installs missing dependencies (compilers, Rust, CMake) on supported Linux distributions (Arch, Debian/Ubuntu, Fedora).
+
 ```bash
-chmod +x ./scripts/build.sh ./scripts/build/build.sh
-chmod +x ./scripts/format.sh ./scripts/format/format*.sh
-chmod +x ./scripts/test.sh ./scripts/test/test.sh
-chmod +x ./scripts/lint.sh ./scripts/lint/lint.sh
+# Make all scripts executable
+chmod +x ./scripts/*.sh ./scripts/*/*.sh
+
+# Build AevumDB
 ./scripts/build.sh
 ```
 
+The script will:
+1. Check for `cc`, `c++`, `rustc`, and `cmake`.
+2. If missing, it will attempt to install them using your system's package manager (`pacman`, `apt`, or `dnf`).
+3. Initialize git submodules.
+4. Configure and build the project.
+
 Outputs to: `build/bin/aevumdb` and `build/bin/aevumsh`
 
-**Note:** The build script automatically initializes git submodules. If you're cloning for the first time, you can also use:
-```bash
-git clone --recursive https://github.com/aevumdb/aevum.git
-```
-
 ## Prerequisites
+
+**Recommendation**: Use `./scripts/build.sh` as it handles these dependencies automatically for you.
 
 ### Ubuntu/Debian
 
@@ -246,6 +251,14 @@ Requirements:
 - **Rust**: rustfmt (installed with Rust toolchain)
 
 ## Common Build Issues
+
+### Missing Dependencies (Compiler, Rust, CMake)
+
+The easiest fix is to let `scripts/build.sh` handle it for you:
+```bash
+./scripts/build.sh
+```
+It supports **Arch Linux (pacman)**, **Ubuntu/Debian (apt)**, and **Fedora (dnf)**.
 
 ### CMake not found
 

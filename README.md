@@ -22,6 +22,8 @@ chmod +x ./scripts/*.sh ./scripts/*/*.sh
 ./scripts/build.sh
 ```
 
+**Note**: The AevumDB build script (`./scripts/build.sh`) automatically detects and installs missing compilers, Rust, and CMake for you on Arch, Debian/Ubuntu, and Fedora.
+
 Binaries will be in `build/bin/`:
 - `aevumdb` - Database server
 - `aevumsh` - Shell client

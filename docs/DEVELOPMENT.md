@@ -13,6 +13,8 @@ cd aevum
 
 ### Install Dependencies
 
+**Recommendation**: Use `./scripts/build.sh` as it handles these dependencies automatically for you.
+
 **Ubuntu 20.04+**
 ```bash
 sudo apt update

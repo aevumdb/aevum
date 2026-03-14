@@ -9,7 +9,7 @@ Welcome to AevumDB!
 
 ## Download AevumDB
 
-Clone and build from source:
+Clone and install from source:
 
 ```bash
 git clone https://github.com/aevumdb/aevum.git
@@ -18,15 +18,14 @@ cd aevum
 # Make all scripts executable
 chmod +x ./scripts/*.sh ./scripts/*/*.sh
 
-# Build the project
-./scripts/build.sh
+# Full system-wide installation (Recommended)
+# This performs: Format -> Build -> Lint -> Test -> System Deploy
+sudo ./scripts/install.sh
 ```
 
-**Note**: The AevumDB build script (`./scripts/build.sh`) automatically detects and installs missing compilers, Rust, and CMake for you on Arch, Debian/Ubuntu, and Fedora.
+**Note**: The AevumDB installer (`sudo ./scripts/install.sh`) automatically detects and installs missing compilers, Rust, CMake, Ninja, and ccache for you on Arch, Debian/Ubuntu, and Fedora.
 
-Binaries will be in `build/bin/`:
-- `aevumdb` - Database server
-- `aevumsh` - Shell client
+Binaries will be in `/opt/aevumdb/bin/` and symlinked to `/usr/local/bin/`.
 
 ## Building
 
@@ -37,16 +36,20 @@ See [Building AevumDB](docs/BUILDING.md).
 For command line options:
 
 ```bash
-$ ./build/bin/aevumdb --help
+$ aevumdb --help
 ```
 
-To run a single server database:
+To manage the system service:
 
 ```bash
-$ ./build/bin/aevumdb
-$
-$ # The shell connects to localhost by default:
-$ ./build/bin/aevumsh
+$ sudo systemctl start aevumdb
+$ sudo systemctl status aevumdb
+```
+
+To use the shell (connects to localhost by default):
+
+```bash
+$ aevumsh
 > db.users.insert({name: "Alice", age: 30})
 > db.users.find({})
 > db.users.update({name: "Alice"}, {age: 31})

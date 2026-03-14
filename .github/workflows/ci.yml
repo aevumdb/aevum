@@ -23,29 +23,29 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake build-essential clang-tools clang-format cargo rustfmt
+        sudo apt-get install -y cmake build-essential clang-tools clang-format cargo rustfmt ninja-build ccache
 
-    - name: Build AevumDB
-      run: |
-        chmod +x ./scripts/build.sh
-        ./scripts/build.sh
+    - name: Configure ccache
+      uses: actions/cache@v4
+      with:
+        path: ~/.ccache
+        key: ${{ runner.os }}-ccache-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-
 
     - name: Make scripts executable
       run: chmod +x ./scripts/*.sh ./scripts/*/*.sh
 
-    - name: Run format check
-      run: ./scripts/format.sh --check
-
-    - name: Run linting
-      run: ./scripts/lint.sh
-
-    - name: Run tests
-      run: ./scripts/test.sh
-
-    - name: Verify binaries
+    - name: Run Full Lifecycle Check
       run: |
-        # Check if binaries exist
+        # Simulate the installation lifecycle (excluding the final system deployment)
+        ./scripts/format.sh --check
+        ./scripts/build.sh
+        ./scripts/lint.sh
+        ./scripts/test.sh
+
+    - name: Verify artifacts
+      run: |
         ls -lh build/bin/aevumdb
         ls -lh build/bin/aevumsh
-        # Run daemon help or basic test if available
-        ./build/bin/aevumdb --help || true
+        ./build/bin/aevumdb --help

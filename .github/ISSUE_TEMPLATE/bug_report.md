@@ -30,11 +30,11 @@ What actually happens instead.
 
 ## Environment
 
-- **AevumDB Version**: (output of `./build/bin/aevumdb --version`)
-- **OS**: Linux (Ubuntu, Fedora, Debian, etc.)
-- **OS Version**: (output of `uname -a`)
-- **Compiler**: (gcc, clang, etc.)
-- **C++ Version**: (C++17, C++20, etc.)
+- **AevumDB Version**: 1.x.x (or output of `aevumdb --help`)
+- **Install Type**: Local build / System-wide (/opt/aevumdb)
+- **OS**: Linux (Arch, Ubuntu, Fedora, etc.)
+- **Service Status**: (output of `systemctl status aevumdb` if applicable)
+- **Compiler**: (output of `cc --version`)
 
 ## Error Output
 

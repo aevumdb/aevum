@@ -12,11 +12,13 @@
  */
 #include "aevum/shell/repl/repl.hpp"
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 
 #include "aevum/shell/parser/command_parser.hpp"
 #include "aevum/util/string/trim.hpp"
+#include "linenoise.h"
 
 namespace aevum::shell::repl {
 
@@ -28,73 +30,80 @@ namespace aevum::shell::repl {
  * root database object.
  */
 void print_help() {
-    std::cout
-        << "\nShell Commands:\n"
-        << "  help                          Display this help message\n"
-        << "  clear                         Clear the terminal screen\n"
-        << "  exit | quit                   Exit the AevumDB shell\n\n"
-        << "Data Operations:\n"
-        << "  db.<coll>.find(<query>)       Find documents matching the query\n"
-        << "  db.<coll>.insert(<doc>)       Insert a new document into the collection\n"
-        << "  db.<coll>.update(<q>, <u>)    Update documents matching the query\n"
-        << "  db.<coll>.delete(<query>)     Delete documents matching the query\n"
-        << "  db.<coll>.count(<query>)      Count documents matching the query\n\n"
-        << "Administrative:\n"
-        << "  db.<coll>.set_schema(<json>)  Set validation schema for a collection\n"
-        << "  db.create_user(u, r)          Create a database user with a role\n"
-        << "                                Roles: ADMIN, READ_WRITE, READ_ONLY\n\n"
-        << "Documentation: https://github.com/aevumdb/aevum\n\n";
+    std::cout << "\nShell Commands:\n"
+              << "  help                          Display this help message\n"
+              << "  clear                         Clear the terminal screen\n"
+              << "  exit | quit                   Exit the AevumDB shell\n\n"
+              << "Data Operations:\n"
+              << "  db.<coll>.find(<query>)       Find documents matching the query\n"
+              << "  db.<coll>.insert(<doc>)       Insert a new document into the collection\n"
+              << "  db.<coll>.update(<q>, <u>)    Update documents matching the query\n"
+              << "  db.<coll>.delete(<query>)     Delete documents matching the query\n"
+              << "  db.<coll>.count(<query>)      Count documents matching the query\n\n"
+              << "Administrative:\n"
+              << "  db.<coll>.set_schema(<json>)  Set validation schema for a collection\n"
+              << "  db.create_user(u, r)          Create a database user with a role\n"
+              << "                                Roles: ADMIN, READ_WRITE, READ_ONLY\n\n"
+              << "Documentation: https://github.com/aevumdb/aevum\n\n";
 }
 
 /**
  * @brief Executes the interactive Read-Eval-Print Loop.
  * @details This function implements the persistent operational state of the shell. It manages
- * the terminal interface by:
- * 1.  Providing a consistent prompt (`> `) to the user.
- * 2.  Capturing full lines of input, including handling the End-Of-File (EOF) signal (Ctrl+D)
- *     for a graceful exit.
- * 3.  Performing high-level string sanitization (trimming) to ensure robust command matching.
- * 4.  Evaluating built-in shell commands locally to maximize responsiveness.
- * 5.  Forwarding all collection-level and administrative database commands to the `parser`
- *     module for in-depth analysis and execution via the provided `AevumClient`.
+ * the terminal interface using the linenoise library for enhanced UX.
  *
  * @param client A reference to the initialized `AevumClient` which maintains the active
  *        network session with the AevumDB daemon.
  */
 void run(client::AevumClient &client) {
-    std::string line;
-    while (true) {
-        std::cout << "> ";
-        if (!std::getline(std::cin, line)) {
-            // If getline fails (e.g., due to EOF/Ctrl+D), we perform a clean break.
-            std::cout << std::endl;
-            break;
-        }
+    const char *history_file = ".aevum_history";
+    std::string history_path;
 
-        // Perform basic sanitization by stripping leading and trailing whitespace.
-        auto trimmed_line_view = aevum::util::string::trim(line);
-        if (trimmed_line_view.empty()) {
-            continue;  // Silently ignore empty or purely whitespace inputs.
-        }
+    // Resolve the full path for the history file in the user's home directory.
+    const char *home = std::getenv("HOME");
+    if (home) {
+        history_path = std::string(home) + "/" + history_file;
+        linenoiseHistoryLoad(history_path.c_str());
+    }
 
-        std::string trimmed_line(trimmed_line_view);
+    char *line;
+    while ((line = linenoise("> ")) != nullptr) {
+        if (line[0] != '\0') {
+            // Perform basic sanitization by stripping leading and trailing whitespace.
+            auto trimmed_line_view = aevum::util::string::trim(line);
+            if (trimmed_line_view.empty()) {
+                free(line);
+                continue;
+            }
 
-        // Process high-level built-in shell control commands.
-        if (trimmed_line == "exit" || trimmed_line == "quit") {
-            break;
-        }
-        if (trimmed_line == "help") {
-            print_help();
-            continue;
-        }
-        if (trimmed_line == "clear") {
-            std::cout << "\033[H\033[2J";
-            continue;
-        }
+            std::string trimmed_line(trimmed_line_view);
 
-        // Delegate database-specific operations to the dedicated command parser.
-        // This keeps the REPL logic clean and focused on user interaction.
-        parser::process_command(trimmed_line, client);
+            // Add non-empty commands to history.
+            linenoiseHistoryAdd(line);
+            if (!history_path.empty()) {
+                linenoiseHistorySave(history_path.c_str());
+            }
+
+            // Process high-level built-in shell control commands.
+            if (trimmed_line == "exit" || trimmed_line == "quit") {
+                free(line);
+                break;
+            }
+            if (trimmed_line == "help") {
+                print_help();
+                free(line);
+                continue;
+            }
+            if (trimmed_line == "clear") {
+                linenoiseClearScreen();
+                free(line);
+                continue;
+            }
+
+            // Delegate database-specific operations to the dedicated command parser.
+            parser::process_command(trimmed_line, client);
+        }
+        free(line);
     }
 }
 

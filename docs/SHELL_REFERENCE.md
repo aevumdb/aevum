@@ -41,6 +41,21 @@ $ aevumsh
 > exit
 ```
 
+## Shell Features (v1.2.2+)
+
+### Command History
+AevumDB shell now supports persistent command history. 
+- Use **Up/Down arrow keys** to navigate previous commands.
+- History is saved automatically to `~/.aevum_history` and persists across sessions.
+
+### Line Editing
+Advanced line editing is supported via the `linenoise` library:
+- **Left/Right arrows**: Move the cursor within the current line.
+- **Ctrl-A / Ctrl-E**: Jump to the beginning or end of the line.
+- **Ctrl-K**: Delete from cursor to the end of the line.
+- **Ctrl-U**: Delete the entire line.
+- **Ctrl-L**: Clear the terminal screen (same as `clear` command).
+
 ## Data Operations
 
 ### insert

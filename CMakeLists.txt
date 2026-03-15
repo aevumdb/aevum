@@ -1,6 +1,6 @@
 # Project Configuration
 cmake_minimum_required(VERSION 3.21)
-project(aevumdb VERSION 1.2.1 LANGUAGES CXX C ASM)
+project(aevumdb VERSION 1.2.2 LANGUAGES CXX C ASM)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -121,21 +121,40 @@ list(FILTER ALL_SOURCES EXCLUDE REGEX "main\\.cpp$")
 set(DAEMON_MAIN "${CMAKE_SOURCE_DIR}/src/aevum/main.cpp")
 set(SHELL_MAIN "${CMAKE_SOURCE_DIR}/src/aevum/shell/main.cpp")
 
-# Core Library
+# Core Library Components
+# We separate linenoise (C) from the main core (C++) to avoid PCH conflicts.
+add_library(linenoise STATIC "${CMAKE_SOURCE_DIR}/third_party/linenoise/linenoise.c")
+target_include_directories(linenoise PUBLIC "${CMAKE_SOURCE_DIR}/third_party/linenoise")
+
+# Main AevumDB Core Library (C++)
 add_library(aevum_core STATIC ${ALL_SOURCES})
 add_dependencies(aevum_core wiredtiger_project)
+
 if(CARGO_EXECUTABLE)
     add_dependencies(aevum_core rust_ffi_target)
 endif()
 
+# Optimized Precompiled Headers for C++
 target_precompile_headers(aevum_core PRIVATE
-    <iostream> <string> <string_view> <vector> <memory> <map> <unordered_map>
-    <functional> <algorithm> <mutex> <shared_mutex> <thread> <chrono>
-    <bson/bson.h> <simdjson.h>
+    <iostream>
+    <string>
+    <string_view>
+    <vector>
+    <memory>
+    <map>
+    <unordered_map>
+    <functional>
+    <algorithm>
+    <mutex>
+    <shared_mutex>
+    <thread>
+    <chrono>
+    <bson/bson.h>
+    <simdjson.h>
 )
 
 target_include_directories(aevum_core PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(aevum_core PUBLIC simdjson bson_static wt_static)
+target_link_libraries(aevum_core PUBLIC linenoise simdjson bson_static wt_static)
 
 if(CARGO_EXECUTABLE)
     target_link_libraries(aevum_core PUBLIC "${RUST_FFI_LIB}")

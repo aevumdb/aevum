@@ -5,6 +5,20 @@ All notable changes to AevumDB are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-03-15
+
+### Added
+- **Command History**: Integrated the `linenoise` library to provide persistent command history and advanced line editing in `aevumsh`.
+- **Persistent History File**: User commands are now saved to `~/.aevum_history` across sessions.
+
+### Optimized
+- **Build System Refinement**: Refactored the build configuration to separate C (`linenoise`) and C++ (`aevum_core`) targets, resolving language-specific Precompiled Header (PCH) conflicts and improving build reliability.
+
+### Updated
+- `src/aevum/shell/repl/repl.cpp` - Replaced standard input handling with `linenoise` for improved UX.
+- `CMakeLists.txt` - Integrated `linenoise` as a standalone static library.
+- `Cargo.toml`, `CMakeLists.txt` - Bumped version to 1.2.2.
+
 ## [1.2.1] - 2026-03-14
 
 ### Updated
@@ -147,6 +161,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- `1.2.2` - Command history and advanced line editing (March 15, 2026)
 - `1.2.1` - Shell help improvements and standardization (March 14, 2026)
 - `1.2.0` - Persistent Vendor & System-wide Installation (March 14, 2026)
 - `1.1.2` - Build system optimizations (ccache, Ninja, Core Lib) (March 13, 2026)

@@ -46,14 +46,22 @@ void parse_config(const std::string &config_path, std::string &data_path, int &p
             size_t pos = line.find("dbPath:") + 7;
             data_path = line.substr(pos);
             // Trim whitespace
-            data_path.erase(0, data_path.find_first_not_of(" \t"));
-            data_path.erase(data_path.find_last_not_of(" \t") + 1);
+            size_t start = data_path.find_first_not_of(" \t");
+            size_t end = data_path.find_last_not_of(" \t");
+            if (start != std::string::npos && end != std::string::npos) {
+                data_path = data_path.substr(start, end - start + 1);
+            } else {
+                data_path.clear();
+            }
         } else if (line.find("port:") != std::string::npos) {
             size_t pos = line.find("port:") + 5;
             std::string port_str = line.substr(pos);
-            port_str.erase(0, port_str.find_first_not_of(" \t"));
-            port_str.erase(port_str.find_last_not_of(" \t") + 1);
-            port = std::stoi(port_str);
+            size_t start = port_str.find_first_not_of(" \t");
+            size_t end = port_str.find_last_not_of(" \t");
+            if (start != std::string::npos && end != std::string::npos) {
+                port_str = port_str.substr(start, end - start + 1);
+                port = std::stoi(port_str);
+            }
         }
     }
 }

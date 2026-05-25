@@ -5,6 +5,12 @@ All notable changes to AevumDB are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2026-05-25
+
+### Fixed
+- Fixed potential undefined behavior in configuration file parsing when trimming whitespace from config values. The string trimming logic in `parse_config` could cause buffer overflow if `std::string::npos` was encountered during whitespace removal.
+- Improved config parser robustness by adding proper boundary checks before string manipulation operations.
+
 ## [1.2.2] - 2026-03-15
 
 ### Added

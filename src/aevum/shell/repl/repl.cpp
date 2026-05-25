@@ -13,6 +13,7 @@
 #include "aevum/shell/repl/repl.hpp"
 
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <string>
 
@@ -59,10 +60,23 @@ void run(client::AevumClient &client) {
     const char *history_file = ".aevum_history";
     std::string history_path;
 
-    // Resolve the full path for the history file in the user's home directory.
+    // Resolve the full path for the history file with robust fallback logic.
     const char *home = std::getenv("HOME");
-    if (home) {
+    if (home && std::strlen(home) > 0) {
         history_path = std::string(home) + "/" + history_file;
+    } else {
+        // Fallback to XDG_RUNTIME_DIR if HOME is not set
+        const char *runtime_dir = std::getenv("XDG_RUNTIME_DIR");
+        if (runtime_dir && std::strlen(runtime_dir) > 0) {
+            history_path = std::string(runtime_dir) + "/" + history_file;
+        } else {
+            // Final fallback to /tmp if XDG_RUNTIME_DIR is not available
+            history_path = "/tmp/" + std::string(history_file);
+        }
+    }
+
+    // Load command history if available
+    if (!history_path.empty()) {
         linenoiseHistoryLoad(history_path.c_str());
     }
 

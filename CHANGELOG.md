@@ -5,6 +5,20 @@ All notable changes to AevumDB are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-05-25
+
+### Added
+- **Health Check Endpoint**: New `/health` endpoint for load balancer and monitoring integration. Returns `{"status":"ok"}` without requiring authentication.
+
+### Improved
+- **Thread Safety**: Converted global server instance pointer to `std::atomic<>` for race-condition-free access between main thread and signal handler.
+- **Robustness**: Enhanced shell history file fallback with multi-level strategy: HOME → XDG_RUNTIME_DIR → /tmp, ensuring history is always saved.
+- **Code Quality**: Added proper memory ordering semantics (`std::memory_order_acquire/release`) for atomic operations.
+
+### Fixed
+- Eliminated potential race conditions in signal-driven shutdown mechanism.
+- Improved error resilience for systems without HOME environment variable set.
+
 ## [1.2.4] - 2026-05-25
 
 ### Fixed

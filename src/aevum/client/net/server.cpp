@@ -201,6 +201,12 @@ void Server::handle_client(int client_socket) {
  * @return A JSON response string to be sent back to the client.
  */
 std::string Server::process_request(std::string_view request) {
+    // Health check endpoint - responds immediately without authentication
+    // Useful for load balancers and monitoring systems
+    if (request == R"({"action":"health"})" || request == "{\"action\":\"health\"}") {
+        return R"({"status":"ok","message":"AevumDB is healthy"})";
+    }
+
     simdjson::dom::parser parser;
     simdjson::dom::element doc;
     try {
@@ -215,6 +221,12 @@ std::string Server::process_request(std::string_view request) {
     if (doc["action"].get_string().get(action) != simdjson::SUCCESS) {
         return R"({"status":"error", "message":"'action' field is missing or not a string"})";
     }
+
+    // Health check via parsed JSON
+    if (action == "health") {
+        return R"({"status":"ok","message":"AevumDB is healthy"})";
+    }
+
     if (doc["auth"].get_string().get(auth_key) != simdjson::SUCCESS) {
         return R"({"status":"error", "message":"'auth' field is missing or not a string"})";
     }

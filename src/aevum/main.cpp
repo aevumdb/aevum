@@ -12,9 +12,11 @@
  * integrity by intercepting termination signals and initiating a coordinated, graceful shutdown
  * sequence across all active subsystems.
  */
+#include <atomic>
 #include <csignal>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <pthread.h>
 #include <stdexcept>
 #include <string>
@@ -72,13 +74,12 @@ void parse_config(const std::string &config_path, std::string &data_path, int &p
 }
 
 /**
- * @brief A global pointer to the active server instance, utilized for signal-driven management.
- * @details This static pointer facilitates the communication between the asynchronous signal
- * handling thread and the main network server instance. It allows the `signal_wait_thread` to
- * invoke the `stop()` method on the server, ensuring that the network listener and all worker
- * threads are terminated correctly upon receipt of external interruption signals.
+ * @brief A thread-safe atomic pointer to the active server instance for signal management.
+ * @details Uses std::atomic to ensure thread-safe access from both the main thread and the
+ * signal handling thread. This prevents race conditions when the signal handler needs to
+ * access the server instance to invoke graceful shutdown.
  */
-static aevum::net::server::Server *g_server_instance = nullptr;
+static std::atomic<aevum::net::server::Server *> g_server_instance(nullptr);
 
 /**
  * @brief The execution routine for the dedicated system signal monitoring thread.
@@ -104,8 +105,10 @@ void signal_wait_thread() {
         aevum::util::log::Logger::warn("System: Interruption event detected. Received signal " +
                                        std::to_string(signal_number) +
                                        ". Initiating the global graceful shutdown sequence...");
-        if (g_server_instance) {
-            g_server_instance->stop();
+        // Safely load the atomic pointer to the server instance
+        auto server = g_server_instance.load(std::memory_order_acquire);
+        if (server) {
+            server->stop();
         }
     }
 }
@@ -205,8 +208,9 @@ int main(int argc, char *argv[]) {
         aevum::util::log::Logger::info("Network: Listening for incoming connections on port " +
                                        std::to_string(port));
 
-        // Register the server instance with the global signal manager.
-        aevum::daemon::g_server_instance = &network_server;
+        // Register the server instance with the global signal manager using atomic store
+        // for thread-safe access from the signal handling thread.
+        aevum::daemon::g_server_instance.store(&network_server, std::memory_order_release);
 
         // Activate the dedicated signal monitoring thread.
         std::thread signal_thread(aevum::daemon::signal_wait_thread);

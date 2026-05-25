@@ -54,7 +54,15 @@ int main(int argc, char *argv[]) {
     // Safely parse command-line arguments with robust error handling.
     try {
         if (argc > 1) host = argv[1];
-        if (argc > 2) port = std::stoi(argv[2]);
+        if (argc > 2) {
+            int parsed_port = std::stoi(argv[2]);
+            // Validate port is within valid range [1, 65535]
+            if (parsed_port < 1 || parsed_port > 65535) {
+                std::cerr << "Error: Port number must be between 1 and 65535." << std::endl;
+                return 1;
+            }
+            port = parsed_port;
+        }
         if (argc > 3) api_key = argv[3];
     } catch (const std::invalid_argument &e) {
         std::cerr << "Error: Invalid number format for port. " << e.what() << std::endl;

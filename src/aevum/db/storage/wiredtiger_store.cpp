@@ -172,7 +172,8 @@ std::vector<std::string> WiredTigerStore::list_collections() {
         std::string_view s_key(key);
 
         // Isolate user table URIs from other metadata entries.
-        if (s_key.substr(0, 6) == "table:") {
+        // Check length before substr to prevent out_of_range exception
+        if (s_key.size() >= 6 && s_key.substr(0, 6) == "table:") {
             collections.emplace_back(s_key.substr(6));
         }
     }

@@ -5,6 +5,18 @@ All notable changes to AevumDB are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.4] - 2026-05-25
+
+### Fixed
+- **Critical: Substring bounds overflow** in `src/aevum/db/storage/wiredtiger_store.cpp` - Fixed potential crash when listing collections. The code now validates substring length before extraction to prevent `std::out_of_range` exceptions during metadata parsing.
+- **Critical: Port range validation** in daemon and shell - Added proper validation to ensure port numbers are within the valid range [1, 65535]. Prevents crashes from invalid port configurations.
+- **Critical: Command parsing bounds check** in `src/aevum/shell/parser/command_parser.cpp` - Added validation that collection name delimiter exists before attempting substring extraction, preventing out-of-bounds access.
+- **Improved error handling** - All `std::stoi()` calls now properly validate parsed values before use, preventing silent failures from invalid configurations.
+
+### Security
+- Hardened input validation across daemon startup, shell client initialization, and command parsing.
+- Eliminated potential vector index out-of-bounds scenarios in collection metadata processing.
+
 ## [1.2.3] - 2026-05-25
 
 ### Fixed

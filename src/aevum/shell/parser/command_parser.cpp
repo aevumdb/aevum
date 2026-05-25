@@ -111,7 +111,8 @@ void process_command(const std::string &line, client::AevumClient &client) {
         size_t paren_start =
             (op_start != std::string::npos) ? line.find('(', op_start) : std::string::npos;
 
-        if (line.rfind("db.", 0) != 0 || paren_start == std::string::npos || line.back() != ')') {
+        if (line.rfind("db.", 0) != 0 || paren_start == std::string::npos || line.back() != ')' ||
+            collection_end == std::string::npos) {
             std::cerr << "Error: Invalid command format. Type 'help' for usage.\n";
             return;
         }

@@ -60,7 +60,12 @@ void parse_config(const std::string &config_path, std::string &data_path, int &p
             size_t end = port_str.find_last_not_of(" \t");
             if (start != std::string::npos && end != std::string::npos) {
                 port_str = port_str.substr(start, end - start + 1);
-                port = std::stoi(port_str);
+                int parsed_port = std::stoi(port_str);
+                // Validate port is within valid range [1, 65535]
+                if (parsed_port < 1 || parsed_port > 65535) {
+                    throw std::out_of_range("Port number must be between 1 and 65535");
+                }
+                port = parsed_port;
             }
         }
     }
@@ -176,7 +181,14 @@ int main(int argc, char *argv[]) {
             } else {
                 // Otherwise, treat arguments as positional: [DATA_PATH] [PORT]
                 data_path = arg1;
-                if (argc > 2) port = std::stoi(argv[2]);
+                if (argc > 2) {
+                    int parsed_port = std::stoi(argv[2]);
+                    // Validate port is within valid range [1, 65535]
+                    if (parsed_port < 1 || parsed_port > 65535) {
+                        throw std::out_of_range("Port number must be between 1 and 65535");
+                    }
+                    port = parsed_port;
+                }
             }
         }
 

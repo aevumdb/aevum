@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <arpa/inet.h>
 #include <cstring>
+#include <ctime>
+#include <functional>
 #include <netinet/tcp.h>
 #include <stdexcept>
 #include <sys/socket.h>
@@ -33,7 +35,9 @@ namespace aevum::net::server {
  * @param db_core A reference to the database engine that will handle all requests.
  * @param port The port on which the server will listen for connections.
  */
-Server::Server(db::Core &db_core, int port) : db_core_(db_core), port_(port) {}
+Server::Server(db::Core &db_core, int port) : db_core_(db_core), port_(port) {
+    metrics_.startup_timestamp = std::time(nullptr);
+}
 
 /**
  * @brief Destroys the `Server`, ensuring a graceful stop.
@@ -263,6 +267,17 @@ std::string Server::process_request(std::string_view request) {
         return R"({"status":"ok","message":"AevumDB is healthy"})";
     }
 
+    // Generate hash of request for deduplication
+    std::hash<std::string_view> hasher;
+    std::string request_hash = std::to_string(hasher(request));
+
+    // Check request cache for duplicates
+    std::string cached_response;
+    if (request_cache_.get_cached_response(request_hash, cached_response)) {
+        aevum::util::log::Logger::debug("Network: Request deduplicated from cache.");
+        return cached_response;
+    }
+
     simdjson::dom::parser parser;
     simdjson::dom::element doc;
     try {
@@ -303,11 +318,17 @@ std::string Server::process_request(std::string_view request) {
         aevum::bson::doc::Document bson_doc;
         if (auto status = aevum::bson::json::parse(simdjson::to_string(doc["data"]), bson_doc);
             !status.ok()) {
-            return R"({"status":"error", "message":"Invalid BSON data for insert"})";
+            std::string response =
+                R"({"status":"error", "message":"Invalid BSON data for insert"})";
+            request_cache_.cache_response(request_hash, response);
+            return response;
         }
         auto [status, id] = db_core_.insert(collection, std::move(bson_doc));
-        return status.ok() ? R"({"status":"ok", "_id":")" + id + R"("})"
-                           : R"({"status":"error", "message":")" + status.message() + R"("})";
+        std::string response =
+            status.ok() ? R"({"status":"ok", "_id":")" + id + R"("})"
+                        : R"({"status":"error", "message":")" + status.message() + R"("})";
+        request_cache_.cache_response(request_hash, response);
+        return response;
     } else if (action == "find") {
         std::string query_json = "{}", sort_json = "{}", projection_json = "{}";
         long int limit_val = 0, skip_val = 0;
@@ -327,25 +348,35 @@ std::string Server::process_request(std::string_view request) {
             if (i < docs.size() - 1) result_json += ",";
         }
         result_json += "]";
-        return R"({"status":"ok", "data":)" + result_json + "}";
+        std::string response = R"({"status":"ok", "data":)" + result_json + "}";
+        request_cache_.cache_response(request_hash, response);
+        return response;
     } else if (action == "update") {
         std::string query_json = "{}", update_json = "{}";
         if (doc["query"].is_object()) query_json = simdjson::to_string(doc["query"]);
         if (doc["update"].is_object()) update_json = simdjson::to_string(doc["update"]);
         auto [status, count] = db_core_.update(collection, query_json, update_json);
-        return status.ok() ? R"({"status":"ok", "updated_count":)" + std::to_string(count) + "}"
-                           : R"({"status":"error", "message":")" + status.message() + R"("})";
+        std::string response =
+            status.ok() ? R"({"status":"ok", "updated_count":)" + std::to_string(count) + "}"
+                        : R"({"status":"error", "message":")" + status.message() + R"("})";
+        request_cache_.cache_response(request_hash, response);
+        return response;
     } else if (action == "count") {
         std::string query_json = "{}";
         if (doc["query"].is_object()) query_json = simdjson::to_string(doc["query"]);
         int count = db_core_.count(collection, query_json);
-        return R"({"status":"ok", "count":)" + std::to_string(count) + "}";
+        std::string response = R"({"status":"ok", "count":)" + std::to_string(count) + "}";
+        request_cache_.cache_response(request_hash, response);
+        return response;
     } else if (action == "delete") {
         std::string query_json = "{}";
         if (doc["query"].is_object()) query_json = simdjson::to_string(doc["query"]);
         auto [status, count] = db_core_.remove(collection, query_json);
-        return status.ok() ? R"({"status":"ok", "deleted_count":)" + std::to_string(count) + "}"
-                           : R"({"status":"error", "message":")" + status.message() + R"("})";
+        std::string response =
+            status.ok() ? R"({"status":"ok", "deleted_count":)" + std::to_string(count) + "}"
+                        : R"({"status":"error", "message":")" + status.message() + R"("})";
+        request_cache_.cache_response(request_hash, response);
+        return response;
     } else if (action == "set_schema") {
         if (role != aevum::db::auth::UserRole::ADMIN) {
             aevum::util::log::Logger::warn(
@@ -360,6 +391,60 @@ std::string Server::process_request(std::string_view request) {
         auto status = db_core_.set_schema(collection, schema_doc);
         return status.ok() ? R"({"status":"ok"})"
                            : R"({"status":"error", "message":")" + status.message() + R"("})";
+    } else if (action == "metrics") {
+        // Metrics endpoint - returns operational metrics for monitoring
+        if (role != aevum::db::auth::UserRole::ADMIN) {
+            aevum::util::log::Logger::warn(
+                "Network: Denied 'metrics' action due to insufficient permissions.");
+            return R"({"status":"error", "message":"Permission denied"})";
+        }
+
+        auto uptime = std::time(nullptr) - metrics_.startup_timestamp;
+        std::string metrics_json = R"({"status":"ok","metrics":{)"
+                                   R"("total_requests":)" +
+                                   std::to_string(metrics_.total_requests.load()) +
+                                   ","
+                                   R"("total_errors":)" +
+                                   std::to_string(metrics_.total_errors.load()) +
+                                   ","
+                                   R"("active_connections":)" +
+                                   std::to_string(metrics_.active_connections.load()) +
+                                   ","
+                                   R"("bytes_received":)" +
+                                   std::to_string(metrics_.total_bytes_received.load()) +
+                                   ","
+                                   R"("bytes_sent":)" +
+                                   std::to_string(metrics_.total_bytes_sent.load()) +
+                                   ","
+                                   R"("uptime_seconds":)" +
+                                   std::to_string(uptime) + "}}";
+
+        return metrics_json;
+    } else if (action == "config") {
+        // Configuration endpoint - returns connection pool settings
+        if (role != aevum::db::auth::UserRole::ADMIN) {
+            aevum::util::log::Logger::warn(
+                "Network: Denied 'config' action due to insufficient permissions.");
+            return R"({"status":"error", "message":"Permission denied"})";
+        }
+
+        std::string config_json = R"({"status":"ok","config":{)"
+                                  R"("max_connections_total":)" +
+                                  std::to_string(conn_config_.max_connections_total) +
+                                  ","
+                                  R"("max_connections_per_ip":)" +
+                                  std::to_string(conn_config_.max_connections_per_ip) +
+                                  ","
+                                  R"("max_idle_timeout_sec":)" +
+                                  std::to_string(conn_config_.max_idle_timeout_sec) +
+                                  ","
+                                  R"("max_request_size_mb":)" +
+                                  std::to_string(conn_config_.max_request_size_bytes / 1048576) +
+                                  ","
+                                  R"("request_timeout_sec":)" +
+                                  std::to_string(conn_config_.request_timeout_sec) + "}}";
+
+        return config_json;
     } else if (action == "create_user") {
         if (role != aevum::db::auth::UserRole::ADMIN) {
             aevum::util::log::Logger::warn(
@@ -385,9 +470,12 @@ std::string Server::process_request(std::string_view request) {
                            : R"({"status":"error", "message":")" + status.message() + R"("})";
     }
 
-    aevum::util::log::Logger::warn("Network: Received request with unknown action: '" +
-                                   std::string(action) + "'.");
-    return R"({"status":"error", "message":"Unknown action"})";
+    std::string response = R"({"status":"error", "message":"Unknown action"})";
+    aevum::util::log::Logger::warn("Network: Received request with unknown action.");
+
+    // Cache response for deduplication before returning
+    request_cache_.cache_response(request_hash, response);
+    return response;
 }
 
 }  // namespace aevum::net::server

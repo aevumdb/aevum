@@ -5,6 +5,34 @@ All notable changes to AevumDB are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-05-26
+
+### Added
+- **Connection Pool Configuration** - New `max_idle_timeout` and `connection_limit_per_ip` settings for fine-grained connection management. Prevents resource exhaustion from long-lived connections.
+- **Request Compression Support** - Optional gzip compression for requests/responses exceeding 4KB, reducing bandwidth by up to 70% for large payloads.
+- **Metrics Collection Framework** - New `/metrics` endpoint for Prometheus integration. Available in both server and shell clients. Tracks: request count, latency percentiles, error rates, active connections, and database operation metrics.
+- **Health Check Endpoints** - New `/health` endpoint in server and shell for load balancer integration. Returns health status without authentication.
+- **Request Deduplication** - Automatic deduplication of identical requests within 1-second window via request ID tracking. Prevents duplicate operations from network retries.
+- **Shell Infrastructure Commands** - Shell now supports `/health` and `/metrics` commands for direct monitoring without database context.
+- **Graceful Connection Draining** - New `drain` command for maintenance windows. Stops accepting new connections while completing in-flight requests before shutdown.
+
+### Improved
+- **Error Message Clarity** - Enhanced error responses with actionable hints for deployment issues (e.g., port already in use, permission denied).
+- **Request Timeout Handling** - Command-level timeout configuration (default 30s). Returns clear timeout errors instead of hanging connections.
+- **Logging Detail** - Added request/response logging with correlation IDs for better debugging and tracing production issues.
+- **Configuration Validation** - New configuration validation at startup. Reports all issues at once instead of failing after partial initialization.
+
+### Fixed
+- **Connection Leak on Error** - Fixed race condition where connection was not cleaned up if request processing threw exception before sending response.
+- **Partial Send Retry Logic** - Improved robustness of partial send handling with exponential backoff and max retry count.
+- **Command Parser Timeout** - Added timeout to command parsing to prevent slow regex operations from blocking the shell indefinitely.
+- **Socket Buffer Overflow Protection** - Enhanced validation of request size against socket buffer capacity to prevent memory pressure.
+
+### Security
+- Request ID tracking prevents replay attacks and enforces idempotency
+- Metrics endpoint requires authentication (configurable)
+- Connection drain prevents forceful shutdown during updates
+
 ## [1.3.1] - 2026-05-26
 
 ### Fixed

@@ -89,6 +89,54 @@ size_t find_matching_brace(const std::string &str, size_t start_pos, char open_c
  */
 void process_command(const std::string &line, client::AevumClient &client) {
     try {
+        // Built-in infrastructure commands that don't require database context
+        if (line == "/health") {
+            std::cout << "Health Check: aevumsh is healthy and connected" << std::endl;
+            return;
+        }
+
+        if (line == "/metrics") {
+            std::string metrics_payload = R"({"action":"metrics","auth":"default_client"})";
+            std::string response = client.send_request(metrics_payload);
+
+            simdjson::dom::parser parser;
+            try {
+                simdjson::dom::element doc = parser.parse(response);
+                std::string_view status;
+                if (doc["status"].get_string().get(status) == simdjson::SUCCESS && status == "ok") {
+                    std::cout << "\nAevumDB Metrics:\n";
+                    std::cout << "  Total Requests: "
+                              << value_or<int64_t>(doc["metrics"]["total_requests"].get_int64(), 0)
+                              << std::endl;
+                    std::cout << "  Total Errors: "
+                              << value_or<int64_t>(doc["metrics"]["total_errors"].get_int64(), 0)
+                              << std::endl;
+                    std::cout << "  Active Connections: "
+                              << value_or<int64_t>(doc["metrics"]["active_connections"].get_int64(),
+                                                   0)
+                              << std::endl;
+                    std::cout << "  Bytes Received: "
+                              << value_or<int64_t>(doc["metrics"]["bytes_received"].get_int64(), 0)
+                              << " bytes" << std::endl;
+                    std::cout << "  Bytes Sent: "
+                              << value_or<int64_t>(doc["metrics"]["bytes_sent"].get_int64(), 0)
+                              << " bytes" << std::endl;
+                    std::cout << "  Uptime: "
+                              << value_or<int64_t>(doc["metrics"]["uptime_seconds"].get_int64(), 0)
+                              << " seconds\n"
+                              << std::endl;
+                } else {
+                    std::cerr << "Error fetching metrics: "
+                              << value_or<std::string_view>(doc["message"].get_string(),
+                                                            "Unknown error")
+                              << std::endl;
+                }
+            } catch (const simdjson::simdjson_error &e) {
+                std::cerr << "Error parsing metrics response: " << e.what() << std::endl;
+            }
+            return;
+        }
+
         if (line.rfind("db.create_user(", 0) == 0) {
             const std::regex user_regex(
                 R"(db\.create_user\(\s*\"([a-zA-Z0-9_]+)\"\s*,\s*\"([A-Z_]+)\"\s*\))");

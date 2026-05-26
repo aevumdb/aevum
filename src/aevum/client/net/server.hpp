@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "aevum/db/core/core.hpp"
+#include "aevum/util/deduplication/request_cache.hpp"
 
 namespace aevum::net::server {
 
@@ -96,6 +97,31 @@ class Server {
      */
     std::string process_request(std::string_view request);
 
+    /**
+     * @brief Configuration structure for connection pool settings.
+     * @details Manages connection pooling limits, idle timeouts, and per-IP rate limiting.
+     */
+    struct ConnectionPoolConfig {
+        int max_connections_total{1000};      ///< Total concurrent connections allowed
+        int max_connections_per_ip{100};      ///< Max connections from a single IP
+        int max_idle_timeout_sec{300};        ///< Connection idle timeout in seconds
+        int max_request_size_bytes{8388608};  ///< Max request size (8MB)
+        int request_timeout_sec{30};          ///< Request processing timeout
+    } conn_config_;
+
+    /**
+     * @brief Metrics collection structure for monitoring and observability.
+     * @details Tracks database and network operation metrics for Prometheus integration.
+     */
+    struct MetricsCollector {
+        std::atomic<uint64_t> total_requests{0};
+        std::atomic<uint64_t> total_errors{0};
+        std::atomic<uint64_t> total_bytes_received{0};
+        std::atomic<uint64_t> total_bytes_sent{0};
+        std::atomic<int> active_connections{0};
+        uint64_t startup_timestamp{0};
+    } metrics_;
+
     /// A reference to the central database engine instance.
     db::Core &db_core_;
     /// The TCP port number on which the server listens.
@@ -112,6 +138,8 @@ class Server {
     std::vector<int> client_sockets_;
     /// A mutex to provide thread-safe access to the `client_sockets_` vector.
     std::mutex client_sockets_mutex_;
+    /// Request deduplication cache to handle retried requests idempotently
+    aevum::util::deduplication::RequestCache request_cache_{1000};
 };
 
 }  // namespace aevum::net::server

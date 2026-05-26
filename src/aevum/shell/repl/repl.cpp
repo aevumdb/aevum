@@ -45,6 +45,9 @@ void print_help() {
               << "  db.<coll>.set_schema(<json>)  Set validation schema for a collection\n"
               << "  db.create_user(u, r)          Create a database user with a role\n"
               << "                                Roles: ADMIN, READ_WRITE, READ_ONLY\n\n"
+              << "Infrastructure:\n"
+              << "  /health                       Display shell and server health status\n"
+              << "  /metrics                      Retrieve real-time performance metrics\n\n"
               << "Documentation: https://github.com/aevumdb/aevum\n\n";
 }
 

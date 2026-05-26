@@ -5,7 +5,37 @@ All notable changes to AevumDB are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-05-26
+
+### Fixed
+- **Network: Request Size Validation** - Added validation to prevent memory exhaustion attacks. Requests exceeding 8MB are now rejected with an error message, protecting against resource exhaustion on servers handling untrusted input.
+- **Network: Partial Send Handling** - Implemented retry loop for `send()` calls to handle partial writes correctly. Previously, large responses could be truncated if the underlying socket couldn't accept all bytes in a single write.
+- **Network: TCP Socket Optimizations** - Added critical TCP socket options for production readiness:
+  - `SO_KEEPALIVE`: Enables TCP keepalive to detect dead connections early
+  - `TCP_NODELAY`: Disables Nagle's algorithm for reduced latency in database operations
+  - `SO_RCVBUF/SO_SNDBUF`: Increased to 256KB each for improved throughput
+  - Listen backlog: Increased from 10 to 128 to handle traffic spikes
+- **Shell: Command Parser Bounds Check** - Enhanced validation in command parser to prevent crashes from malformed commands. Added check to ensure collection name boundaries are valid before substring extraction.
+
+### Security
+- Hardened network layer against resource exhaustion and connection reliability issues.
+- Improved socket configuration for production deployments with better keepalive and buffer management.
+
 ## [1.3.0] - 2026-05-25
+
+### Added
+- **Health Check Endpoint**: New `/health` endpoint for load balancer and monitoring integration. Returns `{"status":"ok"}` without requiring authentication.
+
+### Improved
+- **Thread Safety**: Converted global server instance pointer to `std::atomic<>` for race-condition-free access between main thread and signal handler.
+- **Robustness**: Enhanced shell history file fallback with multi-level strategy: HOME → XDG_RUNTIME_DIR → /tmp, ensuring history is always saved.
+- **Code Quality**: Added proper memory ordering semantics (`std::memory_order_acquire/release`) for atomic operations.
+
+### Fixed
+- Eliminated potential race conditions in signal-driven shutdown mechanism.
+- Improved error resilience for systems without HOME environment variable set.
+
+## [1.2.4] - 2026-05-25
 
 ### Added
 - **Health Check Endpoint**: New `/health` endpoint for load balancer and monitoring integration. Returns `{"status":"ok"}` without requiring authentication.

@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <arpa/inet.h>
 #include <cstring>
+#include <netinet/tcp.h>
 #include <stdexcept>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -109,6 +110,28 @@ void Server::run() {
         throw std::runtime_error("Failed to set socket options: " + std::string(strerror(errno)));
     }
 
+    // Enable TCP keepalive to detect dead connections
+    if (setsockopt(server_socket_fd_, SOL_SOCKET, SO_KEEPALIVE, &opt, sizeof(opt))) {
+        aevum::util::log::Logger::warn("Failed to set SO_KEEPALIVE: " +
+                                       std::string(strerror(errno)));
+    }
+
+    // Disable Nagle's algorithm for low latency
+    if (setsockopt(server_socket_fd_, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt))) {
+        aevum::util::log::Logger::warn("Failed to set TCP_NODELAY: " +
+                                       std::string(strerror(errno)));
+    }
+
+    // Increase socket buffer sizes for better throughput
+    int rcvbufsize = 262144;  // 256KB
+    int sndbufsize = 262144;  // 256KB
+    if (setsockopt(server_socket_fd_, SOL_SOCKET, SO_RCVBUF, &rcvbufsize, sizeof(rcvbufsize))) {
+        aevum::util::log::Logger::warn("Failed to set SO_RCVBUF: " + std::string(strerror(errno)));
+    }
+    if (setsockopt(server_socket_fd_, SOL_SOCKET, SO_SNDBUF, &sndbufsize, sizeof(sndbufsize))) {
+        aevum::util::log::Logger::warn("Failed to set SO_SNDBUF: " + std::string(strerror(errno)));
+    }
+
     struct sockaddr_in server_addr{};
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
@@ -119,7 +142,7 @@ void Server::run() {
                                  ": " + std::string(strerror(errno)));
     }
 
-    if (listen(server_socket_fd_, 10) < 0) {
+    if (listen(server_socket_fd_, 128) < 0) {
         throw std::runtime_error("Failed to listen on server socket: " +
                                  std::string(strerror(errno)));
     }
@@ -165,6 +188,8 @@ void Server::handle_client(int client_socket) {
             client_sockets_.end());
     });
 
+    // Maximum allowed request size: 8MB
+    constexpr size_t MAX_REQUEST_SIZE = 8388608;
     char buffer[16384];
 
     while (is_running_) {
@@ -173,18 +198,49 @@ void Server::handle_client(int client_socket) {
 
         if (bytes_read <= 0) break;
 
+        // Validate request size to prevent memory exhaustion attacks
+        if (bytes_read > static_cast<ssize_t>(MAX_REQUEST_SIZE)) {
+            aevum::util::log::Logger::warn("Network: Received oversized request (" +
+                                           std::to_string(bytes_read) +
+                                           " bytes). Rejecting to prevent memory exhaustion.");
+            std::string error_response = R"({"status":"error","message":"Request too large"})";
+            send(client_socket, error_response.c_str(), error_response.length(), 0);
+            break;
+        }
+
         std::string_view request(buffer, bytes_read);
 
         if (request.find("\"action\":\"exit\"") != std::string_view::npos) {
             aevum::util::log::Logger::info(
                 "Network: Client sent 'exit' command. Closing connection gracefully.");
             std::string response = R"({"status":"ok","message":"Goodbye"})";
-            send(client_socket, response.c_str(), response.length(), 0);
+            // Retry loop for send to handle partial writes
+            size_t sent = 0;
+            while (sent < response.length()) {
+                ssize_t n =
+                    send(client_socket, response.c_str() + sent, response.length() - sent, 0);
+                if (n < 0) {
+                    aevum::util::log::Logger::warn("Network: Failed to send response: " +
+                                                   std::string(strerror(errno)));
+                    break;
+                }
+                sent += n;
+            }
             break;
         }
 
         std::string response = process_request(request);
-        send(client_socket, response.c_str(), response.length(), 0);
+        // Retry loop for send to handle partial writes
+        size_t sent = 0;
+        while (sent < response.length()) {
+            ssize_t n = send(client_socket, response.c_str() + sent, response.length() - sent, 0);
+            if (n < 0) {
+                aevum::util::log::Logger::warn("Network: Failed to send response: " +
+                                               std::string(strerror(errno)));
+                break;
+            }
+            sent += n;
+        }
     }
 }
 
